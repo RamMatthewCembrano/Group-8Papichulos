@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,35 +6,48 @@
 @layer base {
   :root {
     /* Map shadcn variables to Papicholos dark palette (always dark) */
-    --background: 0 0% 7.5%;          /* #141313 */
-    --foreground: 0 0% 90%;           /* #e5e2e1 */
+    --background: 0 0% 7.5%;
+    /* #141313 */
+    --foreground: 0 0% 90%;
+    /* #e5e2e1 */
 
-    --card: 0 0% 5.5%;                /* #0e0e0e — surface-lowest */
+    --card: 0 0% 5.5%;
+    /* #0e0e0e — surface-lowest */
     --card-foreground: 0 0% 90%;
 
-    --popover: 0 0% 12.5%;            /* #201f1f */
+    --popover: 0 0% 12.5%;
+    /* #201f1f */
     --popover-foreground: 0 0% 90%;
 
-    --primary: 0 0% 100%;             /* #ffffff */
-    --primary-foreground: 0 0% 19%;   /* #2f3131 */
+    --primary: 0 0% 100%;
+    /* #ffffff */
+    --primary-foreground: 0 0% 19%;
+    /* #2f3131 */
 
-    --secondary: 0 0% 28%;            /* #474746 */
+    --secondary: 0 0% 28%;
+    /* #474746 */
     --secondary-foreground: 0 0% 90%;
 
-    --muted: 0 0% 16%;                /* #2a2a2a */
-    --muted-foreground: 0 0% 77%;     /* #c4c7c8 */
+    --muted: 0 0% 16%;
+    /* #2a2a2a */
+    --muted-foreground: 0 0% 77%;
+    /* #c4c7c8 */
 
-    --accent: 0 0% 20.5%;            /* #353434 */
+    --accent: 0 0% 20.5%;
+    /* #353434 */
     --accent-foreground: 0 0% 90%;
 
-    --destructive: 4 100% 85%;        /* #ffb4ab */
+    --destructive: 4 100% 85%;
+    /* #ffb4ab */
     --destructive-foreground: 4 100% 21%;
 
-    --border: 0 0% 27%;               /* #444748 — outline-variant */
+    --border: 0 0% 27%;
+    /* #444748 — outline-variant */
     --input: 0 0% 27%;
     --ring: 0 0% 100%;
 
-    --radius: 0rem;                   /* sharp corners — 0 radius everywhere */
+    --radius: 0rem;
+    /* sharp corners — 0 radius everywhere */
 
     --sidebar-background: 0 0% 7.5%;
     --sidebar-foreground: 0 0% 77%;
@@ -93,7 +105,12 @@
     min-height: 100dvh;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -102,10 +119,12 @@
 
 /* ── Utility Classes ─────────────────────────────────────────────── */
 @layer utilities {
+
   /* Hide scrollbars while keeping scroll behavior */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -162,21 +181,41 @@
   }
 
   /* Papi-specific surface background classes */
-  .bg-papi-lowest { background-color: #0e0e0e; }
-  .bg-papi-surface { background-color: #141313; }
-  .bg-papi-container { background-color: #201f1f; }
-  .bg-papi-high { background-color: #2a2a2a; }
-  .bg-papi-highest { background-color: #353434; }
+  .bg-papi-lowest {
+    background-color: #0e0e0e;
+  }
+
+  .bg-papi-surface {
+    background-color: #141313;
+  }
+
+  .bg-papi-container {
+    background-color: #201f1f;
+  }
+
+  .bg-papi-high {
+    background-color: #2a2a2a;
+  }
+
+  .bg-papi-highest {
+    background-color: #353434;
+  }
 
   /* Border classes */
-  .border-papi { border-color: #444748; }
-  .border-papi-outline { border-color: #8e9192; }
+  .border-papi {
+    border-color: #444748;
+  }
+
+  .border-papi-outline {
+    border-color: #8e9192;
+  }
 
   /* Grayscale image filter (editorial look) */
   .img-editorial {
     filter: grayscale(100%);
     transition: filter 0.3s ease;
   }
+
   .img-editorial:hover {
     filter: grayscale(80%);
   }
@@ -197,6 +236,7 @@
 
 /* ── Papicholos Component Classes ────────────────────────────────── */
 @layer components {
+
   /* ── Sharp CTA button (white bg, black text) */
   .btn-papi-primary {
     @apply bg-white text-black font-inter text-xs font-semibold tracking-widest uppercase px-6 py-4 transition-opacity hover:opacity-90 active:scale-[0.98];
@@ -263,12 +303,15 @@
   .adm-sidebar {
     display: flex !important;
   }
+
   .adm-main {
     padding-left: 240px;
   }
+
   .adm-bottomnav {
     display: none !important;
   }
+
   .adm-topbar {
     padding-left: 24px !important;
   }
@@ -279,9 +322,11 @@
   .adm-sidebar {
     display: none !important;
   }
+
   .adm-main {
     padding-left: 0 !important;
   }
+
   .adm-bottomnav {
     display: flex !important;
   }
@@ -293,10 +338,12 @@
     grid-template-columns: auto 1fr !important;
     gap: 12px !important;
   }
+
   .adm-topbar img {
-    height: 36px !important;
+    height: 56px !important;
   }
-  .adm-topbar > div:first-child {
+
+  .adm-topbar>div:first-child {
     display: none;
   }
 }

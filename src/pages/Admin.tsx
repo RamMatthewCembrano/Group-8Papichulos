@@ -380,7 +380,8 @@ export default function Admin() {
                   display: "flex",
                   alignItems: "flex-start",
                   justifyContent: "space-between",
-                  gap: 12,
+                  gap: 16,
+                  flexWrap: "wrap",
                 }}
               >
                 <div>
