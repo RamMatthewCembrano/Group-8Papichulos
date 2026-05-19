@@ -65,7 +65,35 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
   );
   const tableFromUrl = !!urlTable || isPickup;
 
-  const tableOptions = Array.from({ length: 10 }, (_, i) => (i + 1).toString());
+  const [tableOptions, setTableOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("tables")
+          .select("table_number")
+          .eq("is_active", true)
+          .order("table_number", { ascending: true });
+
+        if (error) return;
+
+        const numbers = (data ?? [])
+          .map((r: { table_number: number }) => r.table_number)
+          .filter((n: number) => Number.isFinite(n));
+
+        // Customer selection should only show currently active dine-in tables.
+        if (mounted) setTableOptions(numbers.map((n: number) => n.toString()));
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,9 +163,21 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
         localStorage.setItem(historyKey, JSON.stringify(history));
       }
 
+      // Persist selected table so Admin Tables tab can mirror the customer's table.
+      // Dine-in uses numeric table; pickup uses the generated PUP-XXXX code.
+      try {
+        const dineInTableNumber = !isPickup ? tableNumber : "";
+        const pickupCode = isPickup ? tableNumber : "";
+        localStorage.setItem("papi_current_table_number", dineInTableNumber);
+        localStorage.setItem("papi_current_pickup_code", pickupCode);
+      } catch {
+        // ignore storage errors (private mode etc.)
+      }
+
       toast.success("Order placed successfully!");
       clearCart();
       onConfirm(newOrderId);
+
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
       toast.error("Error: " + message);

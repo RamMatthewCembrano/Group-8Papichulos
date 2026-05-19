@@ -236,6 +236,8 @@ const TablesManager = () => {
           Active tables
         </div>
 
+
+
         {loading ? (
           <div style={{ padding: "24px 0", textAlign: "center" }}>
             <Loader2 size={22} style={{ animation: "spin 1s linear infinite" }} />
