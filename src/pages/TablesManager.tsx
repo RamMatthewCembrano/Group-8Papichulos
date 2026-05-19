@@ -190,8 +190,11 @@ const TablesManager = () => {
               outline: "none",
               fontSize: 14,
               background: "#fff",
+              color: "#000",
+              caretColor: "#000",
             }}
             disabled={saving}
+
           />
 
           <Btn onClick={addTable} disabled={saving} sx={{ fontSize: 14, padding: "11px 18px" }}>
@@ -302,7 +305,7 @@ const TablesManager = () => {
       </div>
 
       <div style={{ fontSize: 12, color: C.faint, lineHeight: 1.5 }}>
-        Note: Deleting a table deactivates it (so it disappears from QR printing). If you want hard-delete instead, change the Supabase mutation.
+        Note: Deleting a table deactivates it (so it disappears from QR printing).
       </div>
     </div>
   );
