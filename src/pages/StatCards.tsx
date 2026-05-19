@@ -96,7 +96,6 @@ export const StatCards = ({
             value={fmt(todayRevenue)}
             sub={`${todaySales} order${todaySales !== 1 ? "s" : ""} completed`}
             icon={<CalendarDays size={14} strokeWidth={1.5} />}
-            accent
           />
           <RevenueCard
             label={`${monthName}`}
