@@ -61,15 +61,15 @@ export const LoginGate = ({ onLogin }: { onLogin: () => void }) => {
             style={{
               display: "flex",
               justifyContent: "center",
-              paddingTop: -10,
-              marginBottom: -50, // Pulls the text up into the logo's transparent area
+              paddingTop: 10,
+              marginBottom: 12,
             }}
           >
             <img
-              src="/PAPICHOLOS-LOGO.png"
+              src="/PAPICHOLOS-LOGO-menu.webp"
               alt="Papicholo's CDO"
               style={{
-                height: 180,
+                height: 80,
                 width: "auto",
                 objectFit: "contain",
               }}

@@ -30,7 +30,7 @@ export const AdminTopBar = ({ pending, onLogout }: TopBarProps) => (
       WebkitBackdropFilter: "blur(12px)",
       borderBottom: `1px solid rgba(255, 255, 255, 0.08)`,
       padding: "0 18px",
-      height: 60,
+      height: 72,
       display: "grid",
       gridTemplateColumns: "1fr auto 1fr",
       alignItems: "center",
@@ -38,10 +38,10 @@ export const AdminTopBar = ({ pending, onLogout }: TopBarProps) => (
   >
     <div />
     <img
-      src="/PAPICHOLOS-LOGO.png"
+      src="/PAPICHOLOS-LOGO-menu.webp"
       alt="Papicholo's CDO"
       style={{
-        height: 44,
+        height: 56,
         width: "auto",
         objectFit: "contain",
         display: "block",
@@ -128,7 +128,7 @@ const NAV: { key: TabKey; Icon: React.ElementType; label: string }[] = [
 
 export const AdminBottomNav = ({ tab, setTab, pending }: BottomNavProps) => (
   <nav
-    className="adm-bottomnav"
+    className="adm-bottomnav no-scrollbar"
     style={{
       position: "fixed",
       bottom: 0,
@@ -140,6 +140,9 @@ export const AdminBottomNav = ({ tab, setTab, pending }: BottomNavProps) => (
       WebkitBackdropFilter: "blur(16px)",
       borderTop: `1px solid rgba(255, 255, 255, 0.08)`,
       display: "flex",
+      overflowX: "auto",
+      overflowY: "hidden",
+      WebkitOverflowScrolling: "touch",
       padding: "10px 10px",
       paddingBottom: "calc(10px + env(safe-area-inset-bottom, 0px))",
       gap: 6,
@@ -153,7 +156,8 @@ export const AdminBottomNav = ({ tab, setTab, pending }: BottomNavProps) => (
           key={key}
           onClick={() => setTab(key)}
           style={{
-            flex: 1,
+            flex: "1 0 auto",
+            minWidth: 72,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",

@@ -60,9 +60,9 @@ export const AdminSidebar = ({
         style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}
       >
         <img
-          src="/PAPICHOLOS-LOGO.png"
+          src="/PAPICHOLOS-LOGO-menu.webp"
           alt="Papicholo's CDO"
-          style={{ height: 72, width: "auto", objectFit: "contain", filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.5))" }}
+          style={{ width: "100%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.5))" }}
         />
       </div>
       <AnimatePresence>

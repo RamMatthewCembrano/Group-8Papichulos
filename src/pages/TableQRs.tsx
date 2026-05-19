@@ -58,7 +58,7 @@ const TableQRs = () => {
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 40 }}>
         <img
-          src="/PAPICHOLOS-LOGO.png"
+          src="/PAPICHOLOS-LOGO-menu.webp"
           alt="Papicholo's CDO"
           style={{ height: 80, objectFit: "contain", marginBottom: 12 }}
         />
