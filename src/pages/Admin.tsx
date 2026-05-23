@@ -316,7 +316,7 @@ export default function Admin() {
     (o) => o.status === "completed" || o.status === "cancelled",
   );
   const pending = orders.filter((o) => o.status === "pending").length;
-  
+
   const shown = activeOrders.filter((o) => {
     if (filter === "all") return true;
     const isPickup = o.table_number === "STORE-PICKUP" || o.table_number.startsWith("PUP-");
@@ -374,226 +374,226 @@ export default function Admin() {
               paddingBottom: 80,
             }}
           >
-          <div
-            style={{ padding: "36px 40px", width: "100%", display: "block" }}
-          >
-            {/* ── Page heading — unique per tab ── */}
-            <div style={{ marginBottom: 24 }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  justifyContent: "space-between",
-                  gap: 16,
-                  flexWrap: "wrap",
-                }}
-              >
-                <div>
-                  <h1
-                    style={{
-                      fontSize: 28,
-                      fontWeight: 500,
-                      color: C.ink,
-                      letterSpacing: "-0.025em",
-                      lineHeight: 1.15,
-                      marginBottom: 5,
-                    }}
-                  >
-                    {tab === "orders"
-                      ? "Orders"
-                      : tab === "inventory"
-                        ? "Inventory"
-                        : tab === "history"
-                          ? "Order History"
-                          : tab === "carousel"
-                            ? "Carousel"
-                            : "Checkout Settings"}
-                  </h1>
-                  <p style={{ fontSize: 14, color: C.faint, fontWeight: 400 }}>
-                    {tab === "orders"
-                      ? `${activeOrders.length} active · ${pending} pending`
-                      : tab === "inventory"
-                        ? `${items.length} item${items.length !== 1 ? "s" : ""} on the menu`
-                        : tab === "history"
-                          ? new Date().toLocaleDateString("en-PH", {
+            <div
+              style={{ padding: "36px 40px", width: "100%", display: "block" }}
+            >
+              {/* ── Page heading — unique per tab ── */}
+              <div style={{ marginBottom: 24 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                    gap: 16,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div>
+                    <h1
+                      style={{
+                        fontSize: 28,
+                        fontWeight: 500,
+                        color: C.ink,
+                        letterSpacing: "-0.025em",
+                        lineHeight: 1.15,
+                        marginBottom: 5,
+                      }}
+                    >
+                      {tab === "orders"
+                        ? "Orders"
+                        : tab === "inventory"
+                          ? "Inventory"
+                          : tab === "history"
+                            ? "Order History"
+                            : tab === "carousel"
+                              ? "Carousel"
+                              : "Checkout Settings"}
+                    </h1>
+                    <p style={{ fontSize: 14, color: C.faint, fontWeight: 400 }}>
+                      {tab === "orders"
+                        ? `${activeOrders.length} active · ${pending} pending`
+                        : tab === "inventory"
+                          ? `${items.length} item${items.length !== 1 ? "s" : ""} on the menu`
+                          : tab === "history"
+                            ? new Date().toLocaleDateString("en-PH", {
                               weekday: "long",
                               month: "long",
                               day: "numeric",
                               year: "numeric",
                             })
-                          : tab === "carousel"
-                            ? "Manage your menu carousel"
-                            : "Manage checkout fees and payment QR"}
-                  </p>
+                            : tab === "carousel"
+                              ? "Manage your menu carousel"
+                              : "Manage checkout fees and payment QR"}
+                    </p>
+                  </div>
+
+                  {/* Inventory action buttons — in the header */}
+                  {tab === "inventory" && (
+                    <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                      <Btn
+                        v="outline"
+                        onClick={() => setShowCatMgr(true)}
+                        sx={{ fontSize: 13, padding: "10px 14px" }}
+                      >
+                        <Tag size={13} strokeWidth={1.5} /> Categories
+                      </Btn>
+                      <Btn
+                        onClick={addItem}
+                        sx={{ fontSize: 13, padding: "10px 14px" }}
+                      >
+                        <Plus size={14} strokeWidth={1.5} /> Add item
+                      </Btn>
+                    </div>
+                  )}
                 </div>
-
-                {/* Inventory action buttons — in the header */}
-                {tab === "inventory" && (
-                  <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                    <Btn
-                      v="outline"
-                      onClick={() => setShowCatMgr(true)}
-                      sx={{ fontSize: 13, padding: "10px 14px" }}
-                    >
-                      <Tag size={13} strokeWidth={1.5} /> Categories
-                    </Btn>
-                    <Btn
-                      onClick={addItem}
-                      sx={{ fontSize: 13, padding: "10px 14px" }}
-                    >
-                      <Plus size={14} strokeWidth={1.5} /> Add item
-                    </Btn>
-                  </div>
-                )}
               </div>
-            </div>
 
-            {/* Stats — orders and inventory tabs only */}
-            {(tab === "orders" || tab === "inventory") && (
-              <StatCards orders={orders} menuCount={items.length} />
-            )}
+              {/* Stats — orders and inventory tabs only */}
+              {(tab === "orders" || tab === "inventory") && (
+                <StatCards orders={orders} menuCount={items.length} />
+              )}
 
-            {/* Filter pills — orders tab only */}
-            {tab === "orders" && (
-              <div
-                className="adm-filter-row no-scrollbar"
-                style={{
-                  display: "flex",
-                  gap: 7,
-                  overflowX: "auto",
-                  WebkitOverflowScrolling: "touch",
-                  marginBottom: 18,
-                  paddingBottom: 2,
-                  flexWrap: "nowrap",
-                }}
-              >
-                {ORDER_FILTERS.map((fl) => (
-                  <button
-                    key={fl}
-                    onClick={() => setFilter(fl)}
-                    style={{
-                      flexShrink: 0,
-                      padding: "8px 16px",
-                      borderRadius: 99,
-                      fontSize: 13,
-                      fontWeight: 500,
-                      cursor: "pointer",
-                      transition: "all 0.15s",
-                      border: `1.5px solid ${filter === fl ? C.ink : C.border}`,
-                      background: filter === fl ? C.ink : C.surface,
-                      color: filter === fl ? C.white : C.mid,
-                    }}
-                  >
-                    {fl === "ready_for_pickup" ? "Ready" : fl.charAt(0).toUpperCase() + fl.slice(1)}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* Loading */}
-            {loading && (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "80px 0",
-                  color: C.faint,
-                }}
-              >
-                <Loader2
-                  size={22}
-                  style={{ animation: "spin 1s linear infinite" }}
-                />
-              </div>
-            )}
-
-            {/* ── Orders tab ── */}
-            {!loading && tab === "orders" && (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: 10 }}
-              >
-                {shown.length === 0 ? (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      padding: "80px 0",
-                      fontSize: 15,
-                      color: C.faint,
-                    }}
-                  >
-                    No active orders.
-                  </div>
-                ) : (
-                  shown.map((o) => (
-                    <OrderCard
-                      key={o.id}
-                      order={o}
-                      onUpdateStatus={updateOrderStatus}
-                    />
-                  ))
-                )}
-              </div>
-            )}
-
-            {/* ── Inventory tab ── */}
-            {!loading && tab === "inventory" && (
-              <>
-                <div className="grid-responsive">
-                  {items.map((item) => (
-                    <MenuItemCard
-                      key={item.id}
-                      item={item}
-                      onEdit={() => {
-                        setEditingItem(item);
-                        setShowItemModal(true);
+              {/* Filter pills — orders tab only */}
+              {tab === "orders" && (
+                <div
+                  className="adm-filter-row no-scrollbar"
+                  style={{
+                    display: "flex",
+                    gap: 7,
+                    overflowX: "auto",
+                    WebkitOverflowScrolling: "touch",
+                    marginBottom: 18,
+                    paddingBottom: 2,
+                    flexWrap: "nowrap",
+                  }}
+                >
+                  {ORDER_FILTERS.map((fl) => (
+                    <button
+                      key={fl}
+                      onClick={() => setFilter(fl)}
+                      style={{
+                        flexShrink: 0,
+                        padding: "8px 16px",
+                        borderRadius: 99,
+                        fontSize: 13,
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        transition: "all 0.15s",
+                        border: `1.5px solid ${filter === fl ? C.ink : C.border}`,
+                        background: filter === fl ? C.ink : C.surface,
+                        color: filter === fl ? C.white : C.mid,
                       }}
-                      onDelete={() => deleteItem(item.id, item.name)}
-                    />
+                    >
+                      {fl === "ready_for_pickup" ? "Ready" : fl.charAt(0).toUpperCase() + fl.slice(1)}
+                    </button>
                   ))}
                 </div>
-              </>
-            )}
+              )}
 
-            {/* ── History tab ── */}
-            {!loading && tab === "history" && (
-              <HistoryPanel
-                orders={historyOrders}
-                onOrdersChange={(updated) =>
-                  setOrders((prev) =>
-                    prev.filter(
-                      (o) =>
-                        o.status === "pending" ||
-                        o.status === "preparing" ||
-                        updated.find((u) => u.id === o.id),
-                    ),
-                  )
-                }
-              />
-            )}
+              {/* Loading */}
+              {loading && (
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "80px 0",
+                    color: C.faint,
+                  }}
+                >
+                  <Loader2
+                    size={22}
+                    style={{ animation: "spin 1s linear infinite" }}
+                  />
+                </div>
+              )}
 
-            {/* ── Carousel tab ── */}
-            {!loading && tab === "carousel" && carouselSpeed !== null && (
-              <CarouselManager
-                images={carouselImages}
-                enabled={carouselEnabled}
-                speed={carouselSpeed}
-                onImagesChange={setCarouselImages}
-                onEnabledChange={setCarouselEnabled}
-                onSpeedChange={(v) => setCarouselSpeed(v)}
-              />
-            )}
+              {/* ── Orders tab ── */}
+              {!loading && tab === "orders" && (
+                <div
+                  style={{ display: "flex", flexDirection: "column", gap: 10 }}
+                >
+                  {shown.length === 0 ? (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        padding: "80px 0",
+                        fontSize: 15,
+                        color: C.faint,
+                      }}
+                    >
+                      No active orders.
+                    </div>
+                  ) : (
+                    shown.map((o) => (
+                      <OrderCard
+                        key={o.id}
+                        order={o}
+                        onUpdateStatus={updateOrderStatus}
+                      />
+                    ))
+                  )}
+                </div>
+              )}
 
-            {/* ── Tables tab ── */}
-                {!loading && tab === "tables" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                <TablesManager />
-              </div>
-            )}
+              {/* ── Inventory tab ── */}
+              {!loading && tab === "inventory" && (
+                <>
+                  <div className="grid-responsive">
+                    {items.map((item) => (
+                      <MenuItemCard
+                        key={item.id}
+                        item={item}
+                        onEdit={() => {
+                          setEditingItem(item);
+                          setShowItemModal(true);
+                        }}
+                        onDelete={() => deleteItem(item.id, item.name)}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* ── History tab ── */}
+              {!loading && tab === "history" && (
+                <HistoryPanel
+                  orders={historyOrders}
+                  onOrdersChange={(updated) =>
+                    setOrders((prev) =>
+                      prev.filter(
+                        (o) =>
+                          o.status === "pending" ||
+                          o.status === "preparing" ||
+                          updated.find((u) => u.id === o.id),
+                      ),
+                    )
+                  }
+                />
+              )}
+
+              {/* ── Carousel tab ── */}
+              {!loading && tab === "carousel" && carouselSpeed !== null && (
+                <CarouselManager
+                  images={carouselImages}
+                  enabled={carouselEnabled}
+                  speed={carouselSpeed}
+                  onImagesChange={setCarouselImages}
+                  onEnabledChange={setCarouselEnabled}
+                  onSpeedChange={(v) => setCarouselSpeed(v)}
+                />
+              )}
+
+              {/* ── Tables tab ── */}
+              {!loading && tab === "tables" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <TablesManager />
+                </div>
+              )}
 
 
-            {/* ── Settings tab ── */}
-            {!loading && tab === "settings" && <SettingsManager />}
+              {/* ── Settings tab ── */}
+              {!loading && tab === "settings" && <SettingsManager />}
 
-          </div>
+            </div>
           </motion.main>
         </AnimatePresence>
       </div>
@@ -626,130 +626,130 @@ export default function Admin() {
       {/* Custom Confirmation Modal */}
       <AnimatePresence>
         {confirmDeleteMenu && (
-            <div key="delete-modal">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setConfirmDeleteMenu(null)}
+          <div key="delete-modal">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setConfirmDeleteMenu(null)}
+              style={{
+                position: "fixed",
+                inset: 0,
+                zIndex: 9998,
+                background: "rgba(0,0,0,0.6)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+              }}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              style={{
+                position: "fixed",
+                zIndex: 9999,
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "calc(100% - 40px)",
+                maxWidth: 340,
+                background: "rgba(25, 24, 24, 0.98)",
+                borderRadius: 24,
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                boxShadow: "0 40px 100px rgba(0,0,0,0.6)",
+                padding: "36px 24px",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <div
                 style={{
-                  position: "fixed",
-                  inset: 0,
-                  zIndex: 9998,
-                  background: "rgba(0,0,0,0.6)",
-                  backdropFilter: "blur(8px)",
-                  WebkitBackdropFilter: "blur(8px)",
-                }}
-              />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                style={{
-                  position: "fixed",
-                  zIndex: 9999,
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "calc(100% - 40px)",
-                  maxWidth: 340,
-                  background: "rgba(25, 24, 24, 0.98)",
-                  borderRadius: 24,
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
-                  boxShadow: "0 40px 100px rgba(0,0,0,0.6)",
-                  padding: "36px 24px",
-                  textAlign: "center",
+                  width: 60,
+                  height: 60,
+                  borderRadius: 18,
+                  background: "rgba(239, 68, 68, 0.15)",
                   display: "flex",
-                  flexDirection: "column",
                   alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 20,
+                  color: "#ef4444",
                 }}
               >
-                <div
-                  style={{
-                    width: 60,
-                    height: 60,
-                    borderRadius: 18,
-                    background: "rgba(239, 68, 68, 0.15)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 20,
-                    color: "#ef4444",
-                  }}
-                >
-                  <Trash2 size={30} />
-                </div>
+                <Trash2 size={30} />
+              </div>
 
-                <h3
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 700,
-                    color: "#fff",
-                    marginBottom: 8,
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  Remove Item?
-                </h3>
-                <p
-                  style={{
-                    fontSize: 14,
-                    color: "rgba(255, 255, 255, 0.6)",
-                    lineHeight: 1.6,
-                    marginBottom: 32,
-                  }}
-                >
-                  Are you sure you want to remove{" "}
-                  <strong style={{ color: "#fff" }}>
-                    "{confirmDeleteMenu.name}"
-                  </strong>?
-                  This item will be permanently deleted.
-                </p>
+              <h3
+                style={{
+                  fontSize: 20,
+                  fontWeight: 700,
+                  color: "#fff",
+                  marginBottom: 8,
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                Remove Item?
+              </h3>
+              <p
+                style={{
+                  fontSize: 14,
+                  color: "rgba(255, 255, 255, 0.6)",
+                  lineHeight: 1.6,
+                  marginBottom: 32,
+                }}
+              >
+                Are you sure you want to remove{" "}
+                <strong style={{ color: "#fff" }}>
+                  "{confirmDeleteMenu.name}"
+                </strong>?
+                This item will be permanently deleted.
+              </p>
 
-                <div
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 12,
+                  width: "100%",
+                }}
+              >
+                <button
+                  onClick={executeDeleteItem}
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 12,
                     width: "100%",
+                    padding: "16px",
+                    borderRadius: 16,
+                    border: "none",
+                    background: "#ef4444",
+                    color: "#fff",
+                    fontSize: 15,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    boxShadow: "0 8px 20px rgba(239, 68, 68, 0.2)",
                   }}
                 >
-                  <button
-                    onClick={executeDeleteItem}
-                    style={{
-                      width: "100%",
-                      padding: "16px",
-                      borderRadius: 16,
-                      border: "none",
-                      background: "#ef4444",
-                      color: "#fff",
-                      fontSize: 15,
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      boxShadow: "0 8px 20px rgba(239, 68, 68, 0.2)",
-                    }}
-                  >
-                    Yes, Remove Item
-                  </button>
-                  <button
-                    onClick={() => setConfirmDeleteMenu(null)}
-                    style={{
-                      width: "100%",
-                      padding: "16px",
-                      borderRadius: 16,
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
-                      background: "rgba(255, 255, 255, 0.05)",
-                      color: "rgba(255, 255, 255, 0.8)",
-                      fontSize: 14,
-                      fontWeight: 500,
-                      cursor: "pointer",
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </motion.div>
-            </div>
+                  Yes, Remove Item
+                </button>
+                <button
+                  onClick={() => setConfirmDeleteMenu(null)}
+                  style={{
+                    width: "100%",
+                    padding: "16px",
+                    borderRadius: 16,
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    color: "rgba(255, 255, 255, 0.8)",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

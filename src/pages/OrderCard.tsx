@@ -188,17 +188,17 @@ export const OrderCard = ({
           >
             <X size={24} />
           </button>
-          <img 
-            src={order.receipt_url} 
-            alt="GCash Receipt" 
-            style={{ 
-              maxWidth: "100%", 
-              maxHeight: "100%", 
-              objectFit: "contain", 
-              borderRadius: 8, 
+          <img
+            src={order.receipt_url}
+            alt="GCash Receipt"
+            style={{
+              maxWidth: "100%",
+              maxHeight: "100%",
+              objectFit: "contain",
+              borderRadius: 8,
               boxShadow: "0 10px 40px rgba(0,0,0,0.5)",
               cursor: "default"
-            }} 
+            }}
             onClick={(e) => e.stopPropagation()}
           />
         </div>
@@ -462,6 +462,18 @@ export const OrderCard = ({
                     <Check size={14} strokeWidth={2} /> Ready to Serve
                   </Btn>
                 )}
+                <Btn
+                  v="ghost"
+                  onClick={() => onUpdateStatus(order.id, "cancelled")}
+                  sx={{
+                    fontSize: 14,
+                    padding: "11px 16px",
+                    color: "#DC2626",
+                    borderColor: "#FCA5A5",
+                  }}
+                >
+                  <X size={14} strokeWidth={1.5} /> Cancel
+                </Btn>
               </div>
             )}
 
@@ -473,6 +485,18 @@ export const OrderCard = ({
                   sx={{ flex: 1, fontSize: 14 }}
                 >
                   <CheckCircle2 size={14} strokeWidth={2} /> {isPickup ? "Mark as Picked Up" : "Mark as Completed"}
+                </Btn>
+                <Btn
+                  v="ghost"
+                  onClick={() => onUpdateStatus(order.id, "cancelled")}
+                  sx={{
+                    fontSize: 14,
+                    padding: "11px 16px",
+                    color: "#DC2626",
+                    borderColor: "#FCA5A5",
+                  }}
+                >
+                  <X size={14} strokeWidth={1.5} /> Cancel
                 </Btn>
               </div>
             )}
