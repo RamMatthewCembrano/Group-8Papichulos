@@ -188,17 +188,17 @@ export const OrderCard = ({
           >
             <X size={24} />
           </button>
-          <img 
-            src={order.receipt_url} 
-            alt="GCash Receipt" 
-            style={{ 
-              maxWidth: "100%", 
-              maxHeight: "100%", 
-              objectFit: "contain", 
-              borderRadius: 8, 
+          <img
+            src={order.receipt_url}
+            alt="GCash Receipt"
+            style={{
+              maxWidth: "100%",
+              maxHeight: "100%",
+              objectFit: "contain",
+              borderRadius: 8,
               boxShadow: "0 10px 40px rgba(0,0,0,0.5)",
               cursor: "default"
-            }} 
+            }}
             onClick={(e) => e.stopPropagation()}
           />
         </div>

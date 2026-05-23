@@ -8,21 +8,21 @@ interface OrderTrackerProps {
 }
 
 const DINE_IN_STEPS: { key: OrderStatus | "received"; label: string; sub: string }[] = [
-  { key: "received",  label: "Order Received", sub: "We got your order!" },
-  { key: "preparing", label: "Preparing",       sub: "The kitchen is on it." },
-  { key: "ready_for_pickup", label: "Ready to Serve",  sub: "Your food is on the way!" },
-  { key: "completed", label: "Completed",  sub: "Enjoy your meal!" },
+  { key: "received", label: "Order Received", sub: "We got your order!" },
+  { key: "preparing", label: "Preparing", sub: "The kitchen is on it." },
+  { key: "ready_for_pickup", label: "Ready to Serve", sub: "Your food is on the way!" },
+  { key: "completed", label: "Completed", sub: "Enjoy your meal!" },
 ];
 
 const PICKUP_STEPS: { key: OrderStatus | "received"; label: string; sub: string }[] = [
-  { key: "received",  label: "Pending Order Received", sub: "Waiting for confirmation." },
-  { key: "preparing", label: "Preparing the Order",    sub: "We are packing your items." },
+  { key: "received", label: "Pending Order Received", sub: "Waiting for confirmation." },
+  { key: "preparing", label: "Preparing the Order", sub: "We are packing your items." },
   { key: "ready_for_pickup", label: "Order Ready for Pickup", sub: "Please proceed to the counter." },
-  { key: "completed", label: "Order Picked Up",        sub: "Thank you!" },
+  { key: "completed", label: "Order Picked Up", sub: "Thank you!" },
 ];
 
 function getStepIndex(status: OrderStatus, isPickup: boolean): number {
-  if (status === "pending")   return 0;
+  if (status === "pending") return 0;
   if (status === "preparing") return 1;
   if (status === "ready_for_pickup") return 2;
   if (status === "completed") return 3;
@@ -34,9 +34,9 @@ const OrderTracker = ({ orderId, onClose }: OrderTrackerProps) => {
 
   const isPickup = order?.table_number === "STORE-PICKUP" || order?.table_number?.startsWith("PUP-");
   const STEPS = isPickup ? PICKUP_STEPS : DINE_IN_STEPS;
-  const activeStep  = order ? getStepIndex(order.status, isPickup) : 0;
+  const activeStep = order ? getStepIndex(order.status, isPickup) : 0;
   const isCancelled = order?.status === "cancelled";
-  const isDone      = order?.status === "completed";
+  const isDone = order?.status === "completed";
 
   return (
     <>
@@ -146,17 +146,17 @@ const OrderTracker = ({ orderId, onClose }: OrderTrackerProps) => {
               textAlign: "center",
             }}
           >
-            {loading      ? "Loading…"
-             : isCancelled ? "Cancelled"
-             : isDone      ? (isPickup ? "Picked Up!" : "Served!")
-             : (activeStep === 1 || activeStep === 2) ? STEPS[activeStep].label
-             : "Order Received"}
+            {loading ? "Loading…"
+              : isCancelled ? "Cancelled"
+                : isDone ? (isPickup ? "Picked Up!" : "Served!")
+                  : (activeStep === 1 || activeStep === 2) ? STEPS[activeStep].label
+                    : "Order Received"}
           </motion.h2>
 
           {/* Wait time badge */}
           <AnimatePresence>
             {!loading && !isCancelled && !isDone && estimatedMinutes > 0 && (
-                <motion.div
+              <motion.div
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
@@ -173,7 +173,7 @@ const OrderTracker = ({ orderId, onClose }: OrderTrackerProps) => {
                   padding: "7px 16px",
                   marginBottom: 28,
                 }}
->
+              >
                 <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "#c4c7c8" }}>
                   Estimated wait: <strong style={{ color: "#ffffff", whiteSpace: "nowrap" }}>15–20 min</strong>
 
@@ -188,7 +188,7 @@ const OrderTracker = ({ orderId, onClose }: OrderTrackerProps) => {
             <div style={{ width: "100%", display: "flex", flexDirection: "column", marginBottom: 32 }}>
               {STEPS.map((step, idx) => {
                 const isCompleted = activeStep > idx;
-                const isActive    = activeStep === idx;
+                const isActive = activeStep === idx;
                 return (
                   <motion.div
                     key={step.key}

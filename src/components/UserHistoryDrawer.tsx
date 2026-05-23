@@ -27,10 +27,10 @@ const UserHistoryDrawer = ({ open, onClose, onSelectOrder, isPickup = false }: U
 
   const handleRemoveOrder = (e: React.MouseEvent, orderId: string) => {
     e.stopPropagation();
-    
+
     // Update local state to remove immediately
     setOrders(prev => prev.filter(o => o.id !== orderId));
-    
+
     // Update localStorage
     const historyKey = getHistoryKey(isPickup);
     const historyStr = localStorage.getItem(historyKey);
@@ -39,7 +39,7 @@ const UserHistoryDrawer = ({ open, onClose, onSelectOrder, isPickup = false }: U
         let historyIds = JSON.parse(historyStr);
         historyIds = historyIds.filter((id: string) => id !== orderId);
         localStorage.setItem(historyKey, JSON.stringify(historyIds));
-      } catch (err) {}
+      } catch (err) { }
     }
   };
 
@@ -69,7 +69,7 @@ const UserHistoryDrawer = ({ open, onClose, onSelectOrder, isPickup = false }: U
         console.error("Supabase Error:", error.message);
         throw error;
       }
-      
+
       if (data) setOrders(data);
     } catch (err) {
       console.error("Error fetching user history:", err);
