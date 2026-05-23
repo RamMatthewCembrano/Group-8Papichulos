@@ -1,12 +1,15 @@
 import {
   ClipboardList,
   LayoutGrid,
+  Table,
+  UtensilsCrossed,
   History,
   LogOut,
   Images,
   ExternalLink,
   Settings,
 } from "lucide-react";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { C } from "./constants";
 
@@ -25,7 +28,7 @@ const NAV: { key: TabKey; Icon: React.ElementType; label: string }[] = [
   { key: "inventory", Icon: LayoutGrid, label: "Inventory" },
   { key: "history", Icon: History, label: "History" },
   { key: "carousel", Icon: Images, label: "Carousel" },
-  { key: "tables", Icon: LayoutGrid, label: "Tables" },
+  { key: "tables", Icon: Table, label: "Tables" },
   { key: "settings", Icon: Settings, label: "Settings" },
 ];
 
