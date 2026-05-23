@@ -156,7 +156,7 @@ const OrderTracker = ({ orderId, onClose }: OrderTrackerProps) => {
           {/* Wait time badge */}
           <AnimatePresence>
             {!loading && !isCancelled && !isDone && estimatedMinutes > 0 && (
-              <motion.div
+                <motion.div
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
@@ -164,15 +164,20 @@ const OrderTracker = ({ orderId, onClose }: OrderTrackerProps) => {
                   display: "flex",
                   alignItems: "center",
                   gap: 6,
+                  width: "auto",
+                  alignSelf: "center",
+                  maxWidth: "100%",
+
                   backgroundColor: "#1c1b1b",
                   border: "1px solid #444748",
                   padding: "7px 16px",
                   marginBottom: 28,
                 }}
-              >
-                <Clock style={{ width: 13, height: 13, color: "#8e9192" }} />
+>
                 <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "#c4c7c8" }}>
-                  Estimated wait: <strong style={{ color: "#ffffff" }}>~{estimatedMinutes} min</strong>
+                  Estimated wait: <strong style={{ color: "#ffffff", whiteSpace: "nowrap" }}>15–20 min</strong>
+
+
                 </span>
               </motion.div>
             )}

@@ -12,7 +12,9 @@ export interface LiveOrder {
   order_items: { name: string; quantity: number; price: number }[];
 }
 
-const FIXED_WAIT_MINUTES = 5;
+const FIXED_WAIT_MINUTES = 15; // estimate for ~15–20 min range
+
+
 
 export function useOrderStatus(orderId: string | null) {
   const [order, setOrder] = useState<LiveOrder | null>(null);
@@ -75,7 +77,8 @@ export function useOrderStatus(orderId: string | null) {
     };
   }, [orderId]);
 
-  // Fixed 5-minute wait when pending
+// Fixed 15–20 minute wait when pending
+
   const estimatedMinutes = order?.status === "pending" ? FIXED_WAIT_MINUTES : 0;
 
   return { order, loading, estimatedMinutes };

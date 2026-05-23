@@ -26,12 +26,14 @@ const getAgeLabel = (mins: number) => {
   return `${mins} min ago`;
 };
 
-// warm = 10–19 min, urgent = 20+ min
+// warm = 15–19 min, urgent = 20+ min
 const getAgeLevel = (mins: number): "fresh" | "warm" | "urgent" => {
   if (mins >= 20) return "urgent";
-  if (mins >= 10) return "warm";
+  if (mins >= 15) return "warm";
   return "fresh";
 };
+
+
 
 const AGE_STYLES = {
   fresh: { color: C.faint, bg: "transparent", border: "transparent" },
