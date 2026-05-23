@@ -138,8 +138,8 @@ export const MenuItemCard = ({
             >
               <Pencil size={13} strokeWidth={1.5} /> Edit
             </Btn>
-            <Btn v="ghost" onClick={onDelete} sx={{ padding: "9px 12px" }}>
-              <Trash2 size={13} strokeWidth={1.5} color={C.faint} />
+            <Btn v="outline" onClick={onDelete} sx={{ padding: "9px 12px", color: "#ef4444", borderColor: "rgba(239, 68, 68, 0.2)" }}>
+              <Trash2 size={13} strokeWidth={1.5} color="#ef4444" />
             </Btn>
           </div>
         </div>
