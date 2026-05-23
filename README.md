@@ -1,77 +1,77 @@
-<<<<<<< HEAD
-# Welcome to your Lovable project
+# Papicholos Order Management System
 
-## Project info
+A full-stack, real-time restaurant ordering and management system designed for both dine-in and pickup customers. The application features a sleek customer-facing menu and a powerful administrative dashboard, all synced instantly using WebSockets.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Key Features
 
-## How can I edit this code?
+### Customer Experience
+- **Interactive Menu & Cart**: Browse food items by category, view dynamic prices, and manage quantities in a slide-out cart.
+- **Flexible Ordering**: Support for **Dine-In** (scan table QR code or select manually) and **Store Pickup** (auto-generated pickup codes).
+- **Payment Integration**: Choose between "Pay at Counter" or "GCash" (includes a receipt image upload feature).
+- **Live Order Tracking**: A floating status bar and an animated full-screen stepper track your order in real-time ("Pending" → "Preparing" → "Ready to Serve" → "Completed").
+- **Order History**: Track past and active orders directly on the device.
 
-There are several ways of editing your application.
+### Admin Dashboard
+- **Real-Time Kanban Board**: Live view of incoming orders. Admins can move orders through the preparation pipeline with a single click.
+- **Menu Management**: Full CRUD interface to add, edit, or delete menu items and categories. Includes direct cloud image uploads.
+- **Table & QR Code Manager**: Manage active tables and automatically generate downloadable QR codes that map directly to the table's ordering link.
+- **Order History & Reversal**: View all past orders, filter by status, and securely restore accidentally cancelled orders (password protected).
+- **Store Settings**: Dynamically update store-wide settings such as checkout fees.
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### Frontend Core
+- **React 18** & **TypeScript**: For robust, type-safe UI development.
+- **Vite**: Ultra-fast frontend build tool and development server.
+- **React Router DOM**: Client-side routing.
 
-Changes made via Lovable will be committed automatically to this repo.
+### Styling & UI
+- **Tailwind CSS**: Utility-first styling for rapid UI development.
+- **shadcn/ui & Radix UI**: Accessible, customizable, and headless UI components.
+- **Framer Motion**: Fluid, physics-based animations and transitions.
+- **Vaul**: High-performance drawer components for mobile-friendly interactions.
+- **Lucide React**: Beautiful and consistent iconography.
 
-**Use your preferred IDE**
+### State Management & Forms
+- **Zod & React Hook Form**: Type-safe schema validation and form state management.
+- **Sonner**: Toast notifications.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Backend & Database
+- **Supabase**: Open-source Firebase alternative providing the backend infrastructure.
+  - **PostgreSQL Database**: Relational data storage for menu items, orders, tables, and settings.
+  - **Supabase Realtime**: WebSocket-based subscriptions for instant UI updates across all connected clients.
+  - **Supabase Storage**: Cloud storage buckets for uploading GCash receipts and menu item images.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Getting Started
 
-Follow these steps:
+### Prerequisites
+- Node.js & npm installed
+- A Supabase project set up with the required database schemas and storage buckets.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Installation
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+1. **Clone the repository:**
+   ```sh
+   git clone <YOUR_GIT_URL>
+   cd <YOUR_PROJECT_NAME>
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+2. **Install dependencies:**
+   ```sh
+   npm install
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+3. **Set up Environment Variables:**
+   Create a `.env` file in the root directory and add your Supabase credentials:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
 
-**Edit a file directly in GitHub**
+4. **Start the development server:**
+   ```sh
+   npm run dev
+   ```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
-=======
-# PAPICHOLOSCDO
->>>>>>> ab86cd5f371c5fe52997a8dddeeb0fc1b039aacc
+5. **Open your browser:**
+   Navigate to `http://localhost:8080` (or the port Vite provides) to see the app running.
