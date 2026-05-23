@@ -277,7 +277,7 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
           <div>
             <Lbl t="Details" />
             <p style={{ fontSize: 11, color: C.faint, marginBottom: 6, lineHeight: 1.5 }}>
-              One descriptor per line — e.g. Spicy, Cold, Beef, Vegetarian…
+              One description per line — e.g. Spicy, Cold, Beef, Vegetarian…
             </p>
             <textarea
               className="input-papi"
