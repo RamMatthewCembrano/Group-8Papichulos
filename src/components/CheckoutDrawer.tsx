@@ -32,6 +32,7 @@ interface CheckoutDrawerProps {
 const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: CheckoutDrawerProps) => {
   const { totalPrice, clearCart, items } = useCart();
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [payment, setPayment] = useState(isPickup ? "gcash" : "counter");
   const [receipt, setReceipt] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -103,6 +104,11 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
       return;
     }
 
+    if (isPickup && !phone.trim()) {
+      toast.error("Please provide a phone number for pickup.");
+      return;
+    }
+
     if (payment === "gcash" && !receipt) {
       toast.error("Please upload your GCash receipt to proceed.");
       return;
@@ -142,6 +148,7 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
             receipt_url: receiptUrl,
             status: "pending",
             order_items: items,
+            phone_number: isPickup ? phone : null,
           },
         ])
         .select("id")
@@ -201,11 +208,13 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
+    height: "44px",
+    boxSizing: "border-box",
     backgroundColor: "#0a0a0a",
     border: "1px solid #444748",
     borderRadius: 0,
     color: "#ffffff",
-    padding: "12px 14px",
+    padding: "0 14px",
     fontFamily: "'Inter', sans-serif",
     fontSize: "14px",
     outline: "none",
@@ -280,9 +289,11 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
               />
             </div>
 
+
+
             {/* Table Number */}
             <div>
-              <label htmlFor="table" style={labelStyle}>Table #</label>
+              <label htmlFor="table" style={labelStyle}>{isPickup ? "Pickup Code" : "Table #"}</label>
               {tableFromUrl ? (
                 <div
                   style={{
@@ -348,6 +359,29 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
                 </Select>
               )}
             </div>
+
+            {/* Phone (Pickup only) */}
+            {isPickup && (
+              <div style={{ gridColumn: "span 2" }}>
+                <label htmlFor="phone" style={labelStyle}>Phone Number</label>
+                <input
+                  id="phone"
+                  type="tel"
+                  placeholder="0912 345 6789"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required={isPickup}
+                  disabled={isSubmitting}
+                  style={inputStyle}
+                  onFocus={(e) => {
+                    (e.currentTarget as HTMLInputElement).style.borderColor = "#ffffff";
+                  }}
+                  onBlur={(e) => {
+                    (e.currentTarget as HTMLInputElement).style.borderColor = "#444748";
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           {/* Payment Method */}

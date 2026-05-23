@@ -54,20 +54,22 @@ export function useOrderStatus(orderId: string | null) {
   useEffect(() => {
     if (!orderId) return;
 
+    const channelSuffix = Math.random().toString(36).substring(7);
     const channel = supabase
-      .channel(`order-tracker-${orderId}`)
+      .channel(`order-tracker-${orderId}-${channelSuffix}`)
       .on(
         "postgres_changes",
         {
-          event: "UPDATE",
+          event: "*",
           schema: "public",
           table: "orders",
-          filter: `id=eq.${orderId}`,
         },
         (payload) => {
-          setOrder((prev) =>
-            prev ? { ...prev, ...(payload.new as Partial<LiveOrder>) } : prev
-          );
+          if (payload.new && "id" in payload.new && payload.new.id === orderId) {
+            setOrder((prev) =>
+              prev ? { ...prev, ...(payload.new as Partial<LiveOrder>) } : prev
+            );
+          }
         }
       )
       .subscribe();

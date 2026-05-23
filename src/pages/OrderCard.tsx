@@ -290,18 +290,7 @@ export const OrderCard = ({
             >
               {isPickup ? "Pickup" : "In-House"}
             </span>
-            {isPickup && (
-              <span
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: C.mid,
-                  letterSpacing: "0.05em",
-                }}
-              >
-                {order.table_number.startsWith("PUP-") ? order.table_number : "STORE-PICKUP"}
-              </span>
-            )}
+
           </div>
           <div
             style={{
@@ -388,7 +377,7 @@ export const OrderCard = ({
             </div>
 
             {/* Placed at timestamp */}
-            <div style={{ fontSize: 13, color: C.faint, marginBottom: 8 }}>
+            <div style={{ fontSize: 13, color: C.faint, marginBottom: isPickup ? 8 : 14 }}>
               Placed at —{" "}
               <span style={{ color: C.mid, fontWeight: 500 }}>
                 {new Date(order.created_at).toLocaleTimeString([], {
@@ -397,6 +386,18 @@ export const OrderCard = ({
                 })}
               </span>
             </div>
+
+            {/* Pickup Code & Phone Number for pickup */}
+            {isPickup && (
+              <>
+                <div style={{ fontSize: 13, color: C.faint, marginBottom: 8 }}>
+                  Pickup Code — <span style={{ color: C.ink, fontWeight: 700, letterSpacing: "0.03em" }}>{order.table_number.startsWith("PUP-") ? order.table_number : "STORE-PICKUP"}</span>
+                </div>
+                <div style={{ fontSize: 13, color: C.faint, marginBottom: 14 }}>
+                  Phone — <span style={{ color: C.mid, fontWeight: 500 }}>{order.phone_number || "—"}</span>
+                </div>
+              </>
+            )}
 
             {/* Payment method + Receipt */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
