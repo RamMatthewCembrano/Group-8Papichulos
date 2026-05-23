@@ -623,11 +623,10 @@ export default function Admin() {
         />
       )}
 
-      {/* Custom Confirmation Modal — Portal to body for true viewport centering */}
+      {/* Custom Confirmation Modal */}
       <AnimatePresence>
-        {confirmDeleteMenu &&
-          createPortal(
-            <>
+        {confirmDeleteMenu && (
+            <div key="delete-modal">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -750,9 +749,8 @@ export default function Admin() {
                   </button>
                 </div>
               </motion.div>
-            </>,
-            document.body
-          )}
+            </div>
+        )}
       </AnimatePresence>
     </div>
   );
