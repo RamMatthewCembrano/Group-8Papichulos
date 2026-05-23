@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { formatPrice } from "@/lib/utils";
 import {
   TrendingUp,
@@ -8,6 +9,7 @@ import {
   CalendarDays,
   CalendarRange,
   BadgeDollarSign,
+  ChevronDown,
 } from "lucide-react";
 import { C } from "./constants";
 import { Order } from "../types";
@@ -39,6 +41,7 @@ export const StatCards = ({
   orders: Order[];
   menuCount: number;
 }) => {
+  const [quickStatsExpanded, setQuickStatsExpanded] = useState(false);
   const completed = orders.filter((o) => o.status === "completed");
 
   // ── Revenue ────────────────────────────────────────────────────────────────
@@ -78,131 +81,108 @@ export const StatCards = ({
         marginBottom: 28,
       }}
     >
-      {/* ── Revenue Board ── */}
-      <div>
-        <SectionLabel
-          icon={<BadgeDollarSign size={13} strokeWidth={1.5} />}
-          text="Revenue Board"
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, alignItems: "start" }}>
+        {/* ── Revenue Board ── */}
+        <ExpandableStatCard
+          title="Revenue Board"
+          icon={<BadgeDollarSign size={15} strokeWidth={1.5} />}
+          dailyLabel={`Today · ${todayLabel}`}
+          dailyValue={fmt(todayRevenue)}
+          dailySub={`${todaySales} order${todaySales !== 1 ? "s" : ""} completed`}
+          monthlyLabel={`${monthName} Revenue`}
+          monthlyValue={fmt(monthRevenue)}
+          monthlySub={`${monthSales} order${monthSales !== 1 ? "s" : ""} completed`}
         />
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-            gap: 12,
-          }}
-        >
-          <RevenueCard
-            label={`Today · ${todayLabel}`}
-            value={fmt(todayRevenue)}
-            sub={`${todaySales} order${todaySales !== 1 ? "s" : ""} completed`}
-            icon={<CalendarDays size={14} strokeWidth={1.5} />}
-          />
-          <RevenueCard
-            label={`${monthName}`}
-            value={fmt(monthRevenue)}
-            sub={`${monthSales} order${monthSales !== 1 ? "s" : ""} completed`}
-            icon={<CalendarRange size={14} strokeWidth={1.5} />}
-          />
-        </div>
-      </div>
 
-      {/* ── Sales Tracker ── */}
-      <div>
-        <SectionLabel
-          icon={<TrendingUp size={13} strokeWidth={1.5} />}
-          text="Sales Tracker"
+        {/* ── Sales Tracker ── */}
+        <ExpandableStatCard
+          title="Sales Tracker"
+          icon={<TrendingUp size={15} strokeWidth={1.5} />}
+          dailyLabel="Daily Sales"
+          dailyValue={todaySales}
+          dailySub="today"
+          monthlyLabel="Monthly Sales"
+          monthlyValue={monthSales}
+          monthlySub={monthName}
         />
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-            gap: 12,
-          }}
-        >
-          <SalesCard label="Daily Sales" value={todaySales} sub="today" />
-          <SalesCard label="Monthly Sales" value={monthSales} sub={monthName} />
-        </div>
       </div>
 
       {/* ── Quick Stats ── */}
-      <div>
-        <SectionLabel
-          icon={<ClipboardList size={13} strokeWidth={1.5} />}
-          text="Quick Stats"
-        />
-        <div
-          className="adm-stats"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-            gap: 12,
-          }}
-        >
+      <div
+        onClick={() => setQuickStatsExpanded(!quickStatsExpanded)}
+        style={{
+          background: C.surface,
+          border: `1.5px solid ${C.border}`,
+          borderRadius: 16,
+          padding: "18px",
+          cursor: "pointer",
+          transition: "all 0.2s ease",
+          display: "flex",
+          flexDirection: "column",
+          userSelect: "none",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, color: C.mid }}>
+            <ClipboardList size={15} strokeWidth={1.5} />
+            <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>Quick Stats</span>
+          </div>
+          <ChevronDown size={16} color={C.mid} style={{ transform: quickStatsExpanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
+        </div>
+
+        {/* Always visible items */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           {[
             {
               label: "Orders Today",
               value: orders.filter((o) => isToday(o.created_at)).length,
-              icon: <ClipboardList size={15} strokeWidth={1.5} />,
-            },
-            {
-              label: "Active",
-              value: active,
-              icon: <ShoppingBag size={15} strokeWidth={1.5} />,
-            },
-            {
-              label: "Served Today",
-              value: completed.filter((o) => isToday(o.created_at)).length,
-              icon: <CheckCircle2 size={15} strokeWidth={1.5} />,
             },
             {
               label: "Menu Items",
               value: menuCount,
-              icon: <LayoutGrid size={15} strokeWidth={1.5} />,
             },
           ].map((d) => (
-            <div
-              key={d.label}
-              style={{
-                background: C.surface,
-                border: `1.5px solid ${C.border}`,
-                borderRadius: 14,
-                padding: "16px 18px",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                  marginBottom: 10,
-                }}
-              >
-                <span style={{ color: C.faint }}>{d.icon}</span>
-                <span
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 500,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                    color: C.faint,
-                  }}
-                >
-                  {d.label}
-                </span>
+            <div key={d.label} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <div style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.08em", color: C.faint }}>
+                {d.label}
               </div>
-              <div
-                style={{
-                  fontSize: 28,
-                  fontWeight: 300,
-                  color: C.ink,
-                  letterSpacing: "-0.02em",
-                  lineHeight: 1,
-                }}
-              >
+              <div style={{ fontSize: 32, fontWeight: 300, color: C.ink, letterSpacing: "-0.03em", lineHeight: 1 }}>
                 {d.value}
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Expandable items */}
+        <div style={{
+          display: "grid",
+          gridTemplateRows: quickStatsExpanded ? "1fr" : "0fr",
+          transition: "grid-template-rows 0.2s ease",
+        }}>
+          <div style={{ overflow: "hidden" }}>
+            <div style={{ height: 1, background: C.border, margin: "16px 0" }} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              {[
+                {
+                  label: "Active",
+                  value: active,
+                },
+                {
+                  label: "Served Today",
+                  value: completed.filter((o) => isToday(o.created_at)).length,
+                },
+              ].map((d) => (
+                <div key={d.label} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <div style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.08em", color: C.faint }}>
+                    {d.label}
+                  </div>
+                  <div style={{ fontSize: 26, fontWeight: 300, color: C.ink, letterSpacing: "-0.03em", lineHeight: 1 }}>
+                    {d.value}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -241,122 +221,82 @@ const SectionLabel = ({
   </div>
 );
 
-const RevenueCard = ({
-  label,
-  value,
-  sub,
+const ExpandableStatCard = ({
+  title,
   icon,
-  accent = false,
+  dailyLabel,
+  dailyValue,
+  dailySub,
+  monthlyLabel,
+  monthlyValue,
+  monthlySub,
 }: {
-  label: string;
-  value: string;
-  sub: string;
+  title: string;
   icon: React.ReactNode;
-  accent?: boolean;
-}) => (
-  <div
-    style={{
-      background: accent ? C.ink : C.surface,
-      border: `1.5px solid ${accent ? C.ink : C.border}`,
-      borderRadius: 16,
-      padding: "18px 18px 16px",
-      display: "flex",
-      flexDirection: "column",
-      gap: 4,
-    }}
-  >
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 6,
-        marginBottom: 8,
-        color: accent ? "rgba(255,255,255,0.5)" : C.faint,
-      }}
-    >
-      {icon}
-      <span
-        style={{
-          fontSize: 11,
-          fontWeight: 500,
-          textTransform: "uppercase",
-          letterSpacing: "0.08em",
-        }}
-      >
-        {label}
-      </span>
-    </div>
-    <div
-      style={{
-        fontSize: 26,
-        fontWeight: 300,
-        color: accent ? C.white : C.ink,
-        letterSpacing: "-0.03em",
-        lineHeight: 1,
-      }}
-    >
-      {value}
-    </div>
-    <div
-      style={{
-        fontSize: 12,
-        color: accent ? "rgba(255,255,255,0.4)" : C.faint,
-        marginTop: 6,
-      }}
-    >
-      {sub}
-    </div>
-  </div>
-);
+  dailyLabel: string;
+  dailyValue: string | number;
+  dailySub: string;
+  monthlyLabel: string;
+  monthlyValue: string | number;
+  monthlySub: string;
+}) => {
+  const [expanded, setExpanded] = useState(false);
 
-const SalesCard = ({
-  label,
-  value,
-  sub,
-}: {
-  label: string;
-  value: number;
-  sub: string;
-}) => (
-  <div
-    style={{
-      background: C.surface,
-      border: `1.5px solid ${C.border}`,
-      borderRadius: 16,
-      padding: "18px 18px 16px",
-    }}
-  >
+  return (
     <div
+      onClick={() => setExpanded(!expanded)}
       style={{
-        fontSize: 11,
-        fontWeight: 500,
-        textTransform: "uppercase",
-        letterSpacing: "0.08em",
-        color: C.faint,
-        marginBottom: 10,
+        background: C.surface,
+        border: `1.5px solid ${C.border}`,
+        borderRadius: 16,
+        padding: "18px",
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        display: "flex",
+        flexDirection: "column",
+        userSelect: "none",
       }}
     >
-      {label}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, color: C.mid }}>
+          {icon}
+          <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>{title}</span>
+        </div>
+        <ChevronDown size={16} color={C.mid} style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <div style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.08em", color: C.faint }}>
+          {dailyLabel}
+        </div>
+        <div style={{ fontSize: 32, fontWeight: 300, color: C.ink, letterSpacing: "-0.03em", lineHeight: 1 }}>
+          {dailyValue}
+        </div>
+        <div style={{ fontSize: 12, color: C.faint, marginTop: 4 }}>
+          {dailySub}
+        </div>
+      </div>
+
+      <div style={{
+        display: "grid",
+        gridTemplateRows: expanded ? "1fr" : "0fr",
+        transition: "grid-template-rows 0.2s ease",
+      }}>
+        <div style={{ overflow: "hidden" }}>
+          <div style={{ height: 1, background: C.border, margin: "16px 0" }} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.08em", color: C.faint }}>
+              {monthlyLabel}
+            </div>
+            <div style={{ fontSize: 26, fontWeight: 300, color: C.ink, letterSpacing: "-0.03em", lineHeight: 1 }}>
+              {monthlyValue}
+            </div>
+            <div style={{ fontSize: 12, color: C.faint, marginTop: 4 }}>
+              {monthlySub}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div
-      style={{
-        fontSize: 36,
-        fontWeight: 300,
-        color: C.ink,
-        letterSpacing: "-0.03em",
-        lineHeight: 1,
-      }}
-    >
-      {value}
-    </div>
-    <div
-      style={{
-        fontSize: 12,
-        color: C.faint,
-        marginTop: 6,
-      }}
-    >
-      {sub}
-    </div>
-  </div>
-);
+  );
+};

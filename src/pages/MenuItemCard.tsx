@@ -130,15 +130,19 @@ export const MenuItemCard = ({
         {/* Buttons always at the bottom */}
         <div>
           <HR />
-          <div style={{ display: "flex", gap: 8, paddingTop: 12 }}>
+          <div style={{ display: "flex", gap: 8, paddingTop: 12, flexWrap: "wrap" }}>
             <Btn
               v="outline"
               onClick={onEdit}
-              sx={{ flex: 1, fontSize: 13, padding: "9px 12px" }}
+              sx={{ flex: "1 1 80px", fontSize: 13, padding: "9px 8px", whiteSpace: "nowrap" }}
             >
               <Pencil size={13} strokeWidth={1.5} /> Edit
             </Btn>
-            <Btn v="outline" onClick={onDelete} sx={{ padding: "9px 12px", color: "#ef4444", borderColor: "rgba(239, 68, 68, 0.2)" }}>
+            <Btn
+              v="outline"
+              onClick={onDelete}
+              sx={{ flex: "1 1 40px", padding: "9px 8px", color: "#ef4444", borderColor: "rgba(239, 68, 68, 0.2)" }}
+            >
               <Trash2 size={13} strokeWidth={1.5} color="#ef4444" />
             </Btn>
           </div>

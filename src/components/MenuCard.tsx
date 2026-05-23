@@ -34,9 +34,11 @@ const MenuCard = ({ item, onSelect }: MenuCardProps) => {
         border: "1px solid #444748",
         backgroundColor: "#0e0e0e",
         borderRadius: 0,
-        cursor: "pointer",
+        cursor: item.is_available === false ? "not-allowed" : "pointer",
+        opacity: item.is_available === false ? 0.6 : 1,
+        filter: item.is_available === false ? "grayscale(100%)" : "none",
       }}
-      onClick={onSelect}
+      onClick={item.is_available === false ? undefined : onSelect}
     >
       {/* ── Food Photo ──────────────────────────────────────────────── */}
       {item.image && (
@@ -74,6 +76,29 @@ const MenuCard = ({ item, onSelect }: MenuCardProps) => {
           pointerEvents: "none",
         }}
       />
+
+      {item.is_available === false && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            color: "#ffffff",
+            padding: "8px 16px",
+            fontFamily: "'Montserrat', sans-serif",
+            fontSize: "14px",
+            fontWeight: 800,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            border: "1px solid #444748",
+            zIndex: 10,
+          }}
+        >
+          OUT OF STOCK
+        </div>
+      )}
 
       {/* ── Bottom Content Area ──────────────────────────────────── */}
       <div
@@ -173,40 +198,42 @@ const MenuCard = ({ item, onSelect }: MenuCardProps) => {
             ₱{formatPrice(item.price)}
           </span>
 
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleAdd();
-            }}
-            aria-label={added ? "Added to cart" : `Add ${item.name} to cart`}
-            style={{
-              width: "32px",
-              height: "32px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#ffffff",
-              color: "#141313",
-              border: "none",
-              borderRadius: 0,
-              cursor: "pointer",
-              transition: "opacity 0.15s ease",
-              flexShrink: 0,
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.opacity = "0.85";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.opacity = "1";
-            }}
-          >
-            {added ? (
-              <Check strokeWidth={2.5} style={{ width: "16px", height: "16px" }} />
-            ) : (
-              <Plus strokeWidth={2.5} style={{ width: "16px", height: "16px" }} />
-            )}
-          </motion.button>
+          {item.is_available !== false && (
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAdd();
+              }}
+              aria-label={added ? "Added to cart" : `Add ${item.name} to cart`}
+              style={{
+                width: "32px",
+                height: "32px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#ffffff",
+                color: "#141313",
+                border: "none",
+                borderRadius: 0,
+                cursor: "pointer",
+                transition: "opacity 0.15s ease",
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.opacity = "0.85";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.opacity = "1";
+              }}
+            >
+              {added ? (
+                <Check strokeWidth={2.5} style={{ width: "16px", height: "16px" }} />
+              ) : (
+                <Plus strokeWidth={2.5} style={{ width: "16px", height: "16px" }} />
+              )}
+            </motion.button>
+          )}
         </div>
       </div>
     </motion.article>

@@ -36,6 +36,7 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
         price: "",
         image: "/placeholder.svg",
         category: categories[0] ?? "Uncategorized",
+        is_available: true,
       });
       setDetailsText("");
     }
@@ -80,6 +81,7 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
       image: form.image ?? "/placeholder.svg",
       category: form.category ?? (categories[0] || "Uncategorized"),
       details: details.length > 0 ? details : null,
+      is_available: form.is_available ?? true,
     };
 
     onSave(sanitized, isNew);
@@ -149,9 +151,11 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
           style={{
             padding: 20,
             overflowY: "auto",
-            display: "flex",
-            flexDirection: "column",
+            display: "grid",
+            gridAutoFlow: "row",
+            alignContent: "start",
             gap: 16,
+            flex: 1,
           }}
         >
           {/* Photo zone */}
@@ -167,6 +171,7 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
             style={{
               position: "relative",
               height: 160,
+              flexShrink: 0,
               background: C.lift,
               cursor: "pointer",
               overflow: "hidden",
@@ -194,13 +199,13 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
               style={{
                 position: "relative",
                 zIndex: 1,
-                background: "rgba(255,255,255,0.92)",
+                background: "transparent",
                 padding: "9px 16px",
                 display: "flex",
                 alignItems: "center",
                 gap: 7,
                 fontSize: 14,
-                color: C.mid,
+                color: "#ffffff",
               }}
             >
               {uploading ? (
@@ -259,6 +264,52 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
                   ▼
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div>
+            <Lbl t="Availability" />
+            <div style={{ display: "flex", gap: 10 }}>
+              <button
+                onClick={() => setForm({ ...form, is_available: true })}
+                style={{
+                  flex: 1,
+                  padding: "10px",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  borderRadius: 0,
+                  border: `1px solid ${form.is_available !== false ? C.ink : C.border}`,
+                  background: form.is_available !== false ? C.ink : "transparent",
+                  color: form.is_available !== false ? C.bg : C.mid,
+                  transition: "all 0.15s",
+                  fontFamily: "'Montserrat', sans-serif",
+                  letterSpacing: "0.05em",
+                  textTransform: "uppercase",
+                }}
+              >
+                In Stock
+              </button>
+              <button
+                onClick={() => setForm({ ...form, is_available: false })}
+                style={{
+                  flex: 1,
+                  padding: "10px",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  borderRadius: 0,
+                  border: `1px solid ${form.is_available === false ? "#ef4444" : C.border}`,
+                  background: form.is_available === false ? "#ef4444" : "transparent",
+                  color: form.is_available === false ? "#fff" : C.mid,
+                  transition: "all 0.15s",
+                  fontFamily: "'Montserrat', sans-serif",
+                  letterSpacing: "0.05em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Out of Stock
+              </button>
             </div>
           </div>
 

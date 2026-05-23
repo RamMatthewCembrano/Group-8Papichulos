@@ -8,6 +8,7 @@ export interface MenuItem {
   image: string;
   category: string;
   details?: string[] | null;
+  is_available?: boolean;
 }
 
 export interface CartItem extends MenuItem {

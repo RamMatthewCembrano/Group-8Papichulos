@@ -28,6 +28,7 @@ export interface Order {
   created_at: string;
   payment_method?: string | null;
   receipt_url?: string | null;
+  phone_number?: string | null;
 }
 
 export interface Category {

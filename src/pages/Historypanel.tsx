@@ -265,18 +265,25 @@ const OrderList = ({
                     </div>
                   )}
 
-                  <div style={{ fontSize: 13, color: C.faint, marginBottom: 12 }}>
-                    Phone — <span style={{ color: C.mid, fontWeight: 500 }}>{"—"}</span>
-                  </div>
 
                   <div style={{ fontSize: 13, color: C.faint, marginBottom: order.receipt_url ? 8 : 12 }}>
                     Payment — <span style={{ color: C.mid, fontWeight: 500 }}>{getPaymentLabel(order.payment_method)}</span>
                   </div>
 
-                  {pickup && (
+                  {pickup ? (
+                    <>
+                      <div style={{ fontSize: 13, color: C.faint, marginBottom: 12 }}>
+                        Pickup ID —{" "}
+                        <span style={{ color: C.ink, fontWeight: 700, letterSpacing: "0.03em" }}>{order.table_number}</span>
+                      </div>
+                      <div style={{ fontSize: 13, color: C.faint, marginBottom: 12 }}>
+                        Phone — <span style={{ color: C.mid, fontWeight: 500 }}>{order.phone_number || "—"}</span>
+                      </div>
+                    </>
+                  ) : (
                     <div style={{ fontSize: 13, color: C.faint, marginBottom: 12 }}>
-                      Pickup ID —{" "}
-                      <span style={{ color: C.ink, fontWeight: 700, letterSpacing: "0.03em" }}>{order.table_number}</span>
+                      Table —{" "}
+                      <span style={{ color: C.ink, fontWeight: 700, letterSpacing: "0.03em" }}>{order.table_number || "—"}</span>
                     </div>
                   )}
 
@@ -409,16 +416,16 @@ export const HistoryPanel = ({
     exportMode === "month"
       ? selectedMonth
         ? new Date(Number(selectedMonth.split("-")[0]), Number(selectedMonth.split("-")[1]) - 1, 1).toLocaleDateString("en-PH", {
-            year: "numeric",
-            month: "long",
-          })
+          year: "numeric",
+          month: "long",
+        })
         : "Select Month"
       : mode === "lookup"
         ? new Date(
-            Number(selectedDate.split("-")[0]),
-            Number(selectedDate.split("-")[1]) - 1,
-            Number(selectedDate.split("-")[2])
-          ).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })
+          Number(selectedDate.split("-")[0]),
+          Number(selectedDate.split("-")[1]) - 1,
+          Number(selectedDate.split("-")[2])
+        ).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })
         : "Browse by Date";
 
   // ── Export to Excel ────────────────────────────────────────────────────────
@@ -779,9 +786,9 @@ export const HistoryPanel = ({
           {exportMode === "month"
             ? selectedMonth
               ? new Date(Number(selectedMonth.split("-")[0]), Number(selectedMonth.split("-")[1]) - 1, 1).toLocaleDateString("en-PH", {
-                  year: "numeric",
-                  month: "long",
-                })
+                year: "numeric",
+                month: "long",
+              })
               : "Select Month"
             : fmtDate(displayDate)}
         </div>
