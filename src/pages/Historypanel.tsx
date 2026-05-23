@@ -265,9 +265,6 @@ const OrderList = ({
                     </div>
                   )}
 
-                  <div style={{ fontSize: 13, color: C.faint, marginBottom: 12 }}>
-                    Name — <span style={{ color: C.mid, fontWeight: 500 }}>{order.customer_name || "—"}</span>
-                  </div>
 
                   <div style={{ fontSize: 13, color: C.faint, marginBottom: order.receipt_url ? 8 : 12 }}>
                     Payment — <span style={{ color: C.mid, fontWeight: 500 }}>{getPaymentLabel(order.payment_method)}</span>
@@ -419,16 +416,16 @@ export const HistoryPanel = ({
     exportMode === "month"
       ? selectedMonth
         ? new Date(Number(selectedMonth.split("-")[0]), Number(selectedMonth.split("-")[1]) - 1, 1).toLocaleDateString("en-PH", {
-            year: "numeric",
-            month: "long",
-          })
+          year: "numeric",
+          month: "long",
+        })
         : "Select Month"
       : mode === "lookup"
         ? new Date(
-            Number(selectedDate.split("-")[0]),
-            Number(selectedDate.split("-")[1]) - 1,
-            Number(selectedDate.split("-")[2])
-          ).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })
+          Number(selectedDate.split("-")[0]),
+          Number(selectedDate.split("-")[1]) - 1,
+          Number(selectedDate.split("-")[2])
+        ).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })
         : "Browse by Date";
 
   // ── Export to Excel ────────────────────────────────────────────────────────
@@ -789,9 +786,9 @@ export const HistoryPanel = ({
           {exportMode === "month"
             ? selectedMonth
               ? new Date(Number(selectedMonth.split("-")[0]), Number(selectedMonth.split("-")[1]) - 1, 1).toLocaleDateString("en-PH", {
-                  year: "numeric",
-                  month: "long",
-                })
+                year: "numeric",
+                month: "long",
+              })
               : "Select Month"
             : fmtDate(displayDate)}
         </div>

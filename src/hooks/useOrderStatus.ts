@@ -79,7 +79,7 @@ export function useOrderStatus(orderId: string | null) {
     };
   }, [orderId]);
 
-// Fixed 15–20 minute wait when pending
+  // Fixed 15–20 minute wait when pending
 
   const estimatedMinutes = order?.status === "pending" ? FIXED_WAIT_MINUTES : 0;
 
