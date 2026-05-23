@@ -14,11 +14,13 @@ import {
   AlertTriangle,
   Loader2,
   Download,
+  RefreshCw,
+  Lock,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { C, HISTORY_FILTERS } from "./constants";
-import { Pill, Lbl, HR } from "./AdminPrimitives";
+import { Pill, Lbl, HR, Btn } from "./AdminPrimitives";
 import { Order } from "../types";
 import * as xlsx from "xlsx";
 
@@ -60,12 +62,18 @@ const OrderList = ({
   orders,
   filter,
   typeFilter,
+  onOrdersChange,
 }: {
   orders: Order[];
   filter: string;
   typeFilter: "all" | "pickup" | "dine-in";
+  onOrdersChange: (updated: Order[]) => void;
 }) => {
   const [openId, setOpenId] = useState<string | null>(null);
+  const [reversingOrder, setReversingOrder] = useState<string | null>(null);
+  const [reversePass, setReversePass] = useState("");
+  const [reverseLoading, setReverseLoading] = useState(false);
+  const [reverseShake, setReverseShake] = useState(false);
 
   let shown = filter === "all" ? orders : orders.filter((o) => o.status === filter);
 
@@ -89,224 +97,370 @@ const OrderList = ({
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      {shown.map((order) => {
-        const isOpen = openId === order.id;
-        const isCompleted = order.status === "completed";
-        const isCancelled = order.status === "cancelled";
-        const pickup = isPickupOrder(order);
+    <>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {shown.map((order) => {
+          const isOpen = openId === order.id;
+          const isCompleted = order.status === "completed";
+          const isCancelled = order.status === "cancelled";
+          const pickup = isPickupOrder(order);
 
-        return (
-          <div
-            key={order.id}
-            className="a-fade"
-            style={{
-              background: C.surface,
-              borderRadius: 14,
-              overflow: "hidden",
-              border: `1.5px solid ${isCancelled ? "#FCA5A5" : C.border}`,
-              opacity: isCancelled ? 0.7 : 1,
-            }}
-          >
-            {/* Header row */}
+          return (
             <div
-              onClick={() => setOpenId((v) => (v === order.id ? null : order.id))}
+              key={order.id}
+              className="a-fade"
               style={{
-                padding: "14px 18px",
-                display: "flex",
-                alignItems: "center",
-                gap: 14,
-                cursor: "pointer",
+                background: C.surface,
+                borderRadius: 14,
+                overflow: "hidden",
+                border: `1.5px solid ${isCancelled ? "#FCA5A5" : C.border}`,
+                opacity: isCancelled ? 0.7 : 1,
               }}
             >
+              {/* Header row */}
               <div
+                onClick={() => setOpenId((v) => (v === order.id ? null : order.id))}
                 style={{
-                  minWidth: 42,
-                  padding: pickup ? "0 8px" : 0,
-                  height: 42,
-                  borderRadius: 10,
-                  flexShrink: 0,
-                  background: pickup ? "#F3E8FF" : C.lift,
-                  color: pickup ? "#6B21A8" : C.mid,
+                  padding: "14px 18px",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: pickup ? 11 : 16,
-                  fontWeight: pickup ? 700 : 500,
-                  letterSpacing: pickup ? "0.03em" : "normal",
+                  gap: 14,
+                  cursor: "pointer",
                 }}
               >
-                {pickup ? "PICKUP" : order.table_number}
-              </div>
-
-              <div style={{ flex: 1, minWidth: 0 }}>
                 <div
                   style={{
-                    fontSize: 15,
-                    fontWeight: 500,
-                    color: C.ink,
-                    marginBottom: 5,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    minWidth: 42,
+                    padding: pickup ? "0 8px" : 0,
+                    height: 42,
+                    borderRadius: 10,
+                    flexShrink: 0,
+                    background: pickup ? "#F3E8FF" : C.lift,
+                    color: pickup ? "#6B21A8" : C.mid,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: pickup ? 11 : 16,
+                    fontWeight: pickup ? 700 : 500,
+                    letterSpacing: pickup ? "0.03em" : "normal",
                   }}
                 >
-                  {order.customer_name}
+                  {pickup ? "PICKUP" : order.table_number}
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <Pill status={order.status} isPickup={pickup} />
-                  <span
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
                     style={{
-                      fontSize: 12,
-                      color: C.faint,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 4,
+                      fontSize: 15,
+                      fontWeight: 500,
+                      color: C.ink,
+                      marginBottom: 5,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
                     }}
                   >
-                    <Clock size={11} strokeWidth={1.5} />
-                    {fmtTime(order.created_at)}
-                  </span>
+                    {order.customer_name}
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <Pill status={order.status} isPickup={pickup} />
+                    <span
+                      style={{
+                        fontSize: 12,
+                        color: C.faint,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 4,
+                      }}
+                    >
+                      <Clock size={11} strokeWidth={1.5} />
+                      {fmtTime(order.created_at)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* GCash receipt thumbnail (if provided) */}
+                {(order.payment_method === "gcash" || order.payment_method === "online") && order.receipt_url && (
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(order.receipt_url!, "_blank");
+                    }}
+                    title="View Receipt"
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: 8,
+                      overflow: "hidden",
+                      flexShrink: 0,
+                      border: `1px solid ${C.line}`,
+                      background: C.lift,
+                      marginRight: 6,
+                      cursor: "zoom-in",
+                    }}
+                  >
+                    <img src={order.receipt_url} alt="Receipt" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </div>
+                )}
+
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 400,
+                      color: isCancelled ? C.faint : C.ink,
+                      letterSpacing: "-0.02em",
+                      marginBottom: 4,
+                      textDecoration: isCancelled ? "line-through" : "none",
+                    }}
+                  >
+                    ₱{Number(order.total_price).toFixed(0)}
+                  </div>
+                  <div style={{ color: C.faint }}>
+                    {isOpen ? <ChevronUp size={14} strokeWidth={1.5} /> : <ChevronDown size={14} strokeWidth={1.5} />}
+                  </div>
                 </div>
               </div>
 
-              {/* GCash receipt thumbnail (if provided) */}
-              {(order.payment_method === "gcash" || order.payment_method === "online") && order.receipt_url && (
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.open(order.receipt_url!, "_blank");
-                  }}
-                  title="View Receipt"
-                  style={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: 8,
-                    overflow: "hidden",
-                    flexShrink: 0,
-                    border: `1px solid ${C.line}`,
-                    background: C.lift,
-                    marginRight: 6,
-                    cursor: "zoom-in",
-                  }}
-                >
-                  <img src={order.receipt_url} alt="Receipt" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-              )}
-
-              <div style={{ textAlign: "right", flexShrink: 0 }}>
-                <div
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 400,
-                    color: isCancelled ? C.faint : C.ink,
-                    letterSpacing: "-0.02em",
-                    marginBottom: 4,
-                    textDecoration: isCancelled ? "line-through" : "none",
-                  }}
-                >
-                  ₱{Number(order.total_price).toFixed(0)}
-                </div>
-                <div style={{ color: C.faint }}>
-                  {isOpen ? <ChevronUp size={14} strokeWidth={1.5} /> : <ChevronDown size={14} strokeWidth={1.5} />}
-                </div>
-              </div>
-            </div>
-
-            {/* Expanded */}
-            {isOpen && (
-              <>
-                <HR />
-                <div style={{ padding: "14px 18px 16px" }}>
-                  <div style={{ background: C.lift, borderRadius: 10, padding: 12, marginBottom: 12 }}>
-                    <Lbl t="Items ordered" />
-                    {order.order_items?.map((item, i) => (
-                      <div
-                        key={item.id ?? i}
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: `${i === 0 ? 0 : 7}px 0 7px`,
-                          borderBottom: i < order.order_items.length - 1 ? `1px solid ${C.line}` : "none",
-                        }}
-                      >
-                        <span style={{ fontSize: 14, color: C.body }}>
-                          <span style={{ color: C.faint, marginRight: 6, fontSize: 12 }}>
-                            {item.quantity}×
+              {/* Expanded */}
+              {isOpen && (
+                <>
+                  <HR />
+                  <div style={{ padding: "14px 18px 16px" }}>
+                    <div style={{ background: C.lift, borderRadius: 10, padding: 12, marginBottom: 12 }}>
+                      <Lbl t="Items ordered" />
+                      {order.order_items?.map((item, i) => (
+                        <div
+                          key={item.id ?? i}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: `${i === 0 ? 0 : 7}px 0 7px`,
+                            borderBottom: i < order.order_items.length - 1 ? `1px solid ${C.line}` : "none",
+                          }}
+                        >
+                          <span style={{ fontSize: 14, color: C.body }}>
+                            <span style={{ color: C.faint, marginRight: 6, fontSize: 12 }}>
+                              {item.quantity}×
+                            </span>
+                            {item.name}
                           </span>
-                          {item.name}
-                        </span>
-                        {item.price != null && (
-                          <span style={{ fontSize: 13, color: C.mid }}>
-                            ₱{(item.price * item.quantity).toFixed(0)}
-                          </span>
+                          {item.price != null && (
+                            <span style={{ fontSize: 13, color: C.mid }}>
+                              ₱{(item.price * item.quantity).toFixed(0)}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {order.receipt_url && order.payment_method === "gcash" && (
+                      <div style={{ marginBottom: 12 }}>
+                        <Lbl t="GCash Receipt" />
+                        <a href={order.receipt_url} target="_blank" rel="noreferrer" style={{ display: "block", marginTop: 6 }}>
+                          <img
+                            src={order.receipt_url}
+                            alt="GCash Receipt"
+                            style={{
+                              width: "100%",
+                              maxWidth: 220,
+                              borderRadius: 8,
+                              border: `1px solid ${C.line}`,
+                              objectFit: "contain",
+                              background: C.lift,
+                            }}
+                          />
+                        </a>
+                      </div>
+                    )}
+
+
+                    <div style={{ fontSize: 13, color: C.faint, marginBottom: order.receipt_url ? 8 : 12 }}>
+                      Payment — <span style={{ color: C.mid, fontWeight: 500 }}>{getPaymentLabel(order.payment_method)}</span>
+                    </div>
+
+                    {pickup ? (
+                      <>
+                        <div style={{ fontSize: 13, color: C.faint, marginBottom: 12 }}>
+                          Pickup ID —{" "}
+                          <span style={{ color: C.ink, fontWeight: 700, letterSpacing: "0.03em" }}>{order.table_number}</span>
+                        </div>
+                        <div style={{ fontSize: 13, color: C.faint, marginBottom: 12 }}>
+                          Phone — <span style={{ color: C.mid, fontWeight: 500 }}>{order.phone_number || "—"}</span>
+                        </div>
+                      </>
+                    ) : (
+                      <div style={{ fontSize: 13, color: C.faint, marginBottom: 12 }}>
+                        Table —{" "}
+                        <span style={{ color: C.ink, fontWeight: 700, letterSpacing: "0.03em" }}>{order.table_number || "—"}</span>
+                      </div>
+                    )}
+
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: isCompleted ? C.mid : "#DC2626" }}>
+                        {isCompleted ? (
+                          <>
+                            <CheckCircle2 size={13} strokeWidth={1.5} /> Completed successfully
+                          </>
+                        ) : (
+                          <>
+                            <X size={13} strokeWidth={1.5} /> Order was cancelled
+                          </>
                         )}
                       </div>
-                    ))}
-                  </div>
-
-                  {order.receipt_url && order.payment_method === "gcash" && (
-                    <div style={{ marginBottom: 12 }}>
-                      <Lbl t="GCash Receipt" />
-                      <a href={order.receipt_url} target="_blank" rel="noreferrer" style={{ display: "block", marginTop: 6 }}>
-                        <img
-                          src={order.receipt_url}
-                          alt="GCash Receipt"
-                          style={{
-                            width: "100%",
-                            maxWidth: 220,
-                            borderRadius: 8,
-                            border: `1px solid ${C.line}`,
-                            objectFit: "contain",
-                            background: C.lift,
+                      {isCancelled && (
+                        <Btn
+                          v="outline"
+                          onClick={() => {
+                            setReversingOrder(order.id);
+                            setReversePass("");
                           }}
-                        />
-                      </a>
-                    </div>
-                  )}
-
-
-                  <div style={{ fontSize: 13, color: C.faint, marginBottom: order.receipt_url ? 8 : 12 }}>
-                    Payment — <span style={{ color: C.mid, fontWeight: 500 }}>{getPaymentLabel(order.payment_method)}</span>
-                  </div>
-
-                  {pickup ? (
-                    <>
-                      <div style={{ fontSize: 13, color: C.faint, marginBottom: 12 }}>
-                        Pickup ID —{" "}
-                        <span style={{ color: C.ink, fontWeight: 700, letterSpacing: "0.03em" }}>{order.table_number}</span>
-                      </div>
-                      <div style={{ fontSize: 13, color: C.faint, marginBottom: 12 }}>
-                        Phone — <span style={{ color: C.mid, fontWeight: 500 }}>{order.phone_number || "—"}</span>
-                      </div>
-                    </>
-                  ) : (
-                    <div style={{ fontSize: 13, color: C.faint, marginBottom: 12 }}>
-                      Table —{" "}
-                      <span style={{ color: C.ink, fontWeight: 700, letterSpacing: "0.03em" }}>{order.table_number || "—"}</span>
-                    </div>
-                  )}
-
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: isCompleted ? C.mid : "#DC2626" }}>
-                      {isCompleted ? (
-                        <>
-                          <CheckCircle2 size={13} strokeWidth={1.5} /> Completed successfully
-                        </>
-                      ) : (
-                        <>
-                          <X size={13} strokeWidth={1.5} /> Order was cancelled
-                        </>
+                          sx={{ fontSize: 12, padding: "6px 12px", background: "transparent", borderColor: "#444748" }}
+                        >
+                          <RefreshCw size={13} strokeWidth={1.5} style={{ marginRight: 4 }} /> Restore
+                        </Btn>
                       )}
                     </div>
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Password prompt for reversing cancellation */}
+      {reversingOrder && (
+        <div
+          onClick={() => !reverseLoading && setReversingOrder(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.85)",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
+            zIndex: 99999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={reverseShake ? "a-shake" : ""}
+            style={{
+              background: C.surface,
+              width: "100%",
+              maxWidth: 380,
+              padding: 24,
+              borderRadius: 16,
+              border: `1px solid ${C.border}`,
+            }}
+          >
+            <div style={{ fontSize: 18, fontWeight: 500, color: C.ink, marginBottom: 8 }}>
+              Reverse Cancellation
+            </div>
+            <div style={{ fontSize: 14, color: C.faint, marginBottom: 20 }}>
+              Please enter your admin password to restore this order to pending.
+            </div>
+            
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setReverseLoading(true);
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user?.email) {
+                  toast.error("Not authenticated");
+                  setReverseLoading(false);
+                  return;
+                }
+                
+                // Verify password
+                const { error: authError } = await supabase.auth.signInWithPassword({
+                  email: user.email,
+                  password: reversePass,
+                });
+
+                if (authError) {
+                  setReverseShake(true);
+                  setTimeout(() => setReverseShake(false), 420);
+                  toast.error("Incorrect password");
+                  setReverseLoading(false);
+                  return;
+                }
+
+                // If password correct, update order status
+                const { error: updateError } = await supabase
+                  .from("orders")
+                  .update({ status: "pending" })
+                  .eq("id", reversingOrder);
+
+                if (updateError) {
+                  toast.error("Failed to restore order");
+                } else {
+                  toast.success("Order restored successfully");
+                  onOrdersChange(orders.map(o => o.id === reversingOrder ? { ...o, status: "pending" } : o));
+                  setReversingOrder(null);
+                }
+                setReverseLoading(false);
+              }}
+              style={{ display: "flex", flexDirection: "column", gap: 16 }}
+            >
+              <div>
+                <label style={{ display: "block", fontSize: 12, color: C.faint, marginBottom: 6, fontWeight: 500 }}>
+                  PASSWORD
+                </label>
+                <input
+                  type="password"
+                  value={reversePass}
+                  onChange={(e) => setReversePass(e.target.value)}
+                  placeholder="••••••••"
+                  autoFocus
+                  disabled={reverseLoading}
+                  style={{
+                    width: "100%",
+                    background: C.lift,
+                    border: `1px solid ${C.line}`,
+                    color: C.ink,
+                    padding: "10px 14px",
+                    borderRadius: 8,
+                    fontSize: 14,
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                <Btn
+                  v="outline"
+                  onClick={() => setReversingOrder(null)}
+                  disabled={reverseLoading}
+                  sx={{ flex: 1 }}
+                >
+                  Cancel
+                </Btn>
+                <Btn
+                  submit
+                  disabled={reverseLoading}
+                  sx={{ flex: 1, background: C.ink, color: C.white }}
+                >
+                  {reverseLoading ? (
+                    <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
+                  ) : (
+                    <>
+                      <Lock size={16} strokeWidth={1.5} style={{ marginRight: 6 }} /> Restore
+                    </>
+                  )}
+                </Btn>
+              </div>
+            </form>
           </div>
-        );
-      })}
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 
@@ -865,8 +1019,7 @@ export const HistoryPanel = ({
       </div>
 
       {/* ── Order list ── */}
-      <OrderList orders={ordersToShow} filter={filter} typeFilter={typeFilter} />
+      <OrderList orders={ordersToShow} filter={filter} typeFilter={typeFilter} onOrdersChange={onOrdersChange} />
     </div>
   );
 };
-
