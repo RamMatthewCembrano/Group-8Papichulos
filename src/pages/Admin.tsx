@@ -19,9 +19,10 @@ import { CategoryManager } from "./Categorymanager";
 import { CarouselManager } from "./Carouselmanager";
 import { SettingsManager } from "./SettingsManager";
 import TablesManager from "./TablesManager";
+import { AdminLogsManager } from "./AdminLogsManager";
+import { logAdminAction } from "../lib/logger";
 
-
-type TabKey = "orders" | "inventory" | "history" | "carousel" | "settings" | "tables";
+type TabKey = "orders" | "inventory" | "history" | "carousel" | "settings" | "tables" | "logs";
 
 
 
@@ -75,6 +76,7 @@ export default function Admin() {
   }, []);
   const [tab, setTab] = useState<TabKey>("orders");
   const [filter, setFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState<"all" | "pickup" | "dine-in">("all");
   const [orders, setOrders] = useState<Order[]>([]);
   const [items, setItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -241,6 +243,9 @@ export default function Admin() {
       if (status === "completed") toast.success("Order marked as served ✓");
       if (status === "cancelled")
         toast("Order cancelled", { description: "Moved to history" });
+      const order = orders.find(o => o.id === id);
+      const customerName = order?.customer_name || 'Unknown';
+      logAdminAction("Updated Order Status", `Customer: ${customerName} - changed to '${status}' | ID: ${id}`);
     }
   };
 
@@ -256,10 +261,12 @@ export default function Admin() {
         setShowItemModal(false);
         setEditingItem(null);
         toast.success("Item created");
+        logAdminAction("Added Menu Item", `Name: ${savedItem.name || 'Unknown'}`);
       } else {
         toast.error(error?.message ?? "Failed to save item");
       }
     } else {
+      if (!editingItem) return;
       const { error } = await supabase
         .from("menu_items")
         .update(savedItem)
@@ -269,6 +276,18 @@ export default function Admin() {
           p.map((i) => (i.id === editingItem.id ? { ...i, ...savedItem } : i)),
         );
         setShowItemModal(false);
+        
+        const changes: string[] = [];
+        if (savedItem.name !== undefined && savedItem.name !== editingItem.name) changes.push(`name to '${savedItem.name}'`);
+        if (savedItem.price !== undefined && savedItem.price !== editingItem.price) changes.push(`price to ₱${savedItem.price}`);
+        if (savedItem.category !== undefined && savedItem.category !== editingItem.category) changes.push(`category to '${savedItem.category}'`);
+        if (savedItem.description !== undefined && savedItem.description !== editingItem.description) changes.push(`description updated`);
+        if (savedItem.image !== undefined && savedItem.image !== editingItem.image) changes.push(`photo changed`);
+        if (savedItem.is_available !== undefined && savedItem.is_available !== editingItem.is_available) changes.push(savedItem.is_available ? "marked available" : "marked unavailable");
+        
+        const details = changes.length > 0 ? `Changes: ${changes.join(", ")}` : "No changes made";
+        logAdminAction("Updated Menu Item", `Item: ${savedItem.name || editingItem.name} | ${details}`);
+        
         setEditingItem(null);
         toast.success("Saved");
       } else {
@@ -299,6 +318,7 @@ export default function Admin() {
     if (!error) {
       setItems((p) => p.filter((i) => i.id !== id));
       toast.success("Removed");
+      logAdminAction("Deleted Menu Item", `ID: ${id}, Name: ${confirmDeleteMenu.name}`);
     } else {
       toast.error(error.message || "Failed to remove item.");
     }
@@ -318,11 +338,13 @@ export default function Admin() {
   const pending = orders.filter((o) => o.status === "pending").length;
 
   const shown = activeOrders.filter((o) => {
-    if (filter === "all") return true;
     const isPickup = o.table_number === "STORE-PICKUP" || o.table_number.startsWith("PUP-");
-    if (filter === "pickup") return isPickup;
-    if (filter === "dine-in") return !isPickup;
-    return o.status === filter; // for status filters like pending, preparing, ready_for_pickup
+    
+    if (typeFilter === "pickup" && !isPickup) return false;
+    if (typeFilter === "dine-in" && isPickup) return false;
+
+    if (filter === "all") return true;
+    return o.status === filter;
   });
 
   return (
@@ -407,7 +429,11 @@ export default function Admin() {
                             ? "Order History"
                             : tab === "carousel"
                               ? "Carousel"
-                              : "Checkout Settings"}
+                              : tab === "tables"
+                                ? "Tables"
+                                : tab === "logs"
+                                  ? "Admin Logs"
+                                  : "Checkout Settings"}
                     </h1>
                     <p style={{ fontSize: 14, color: C.faint, fontWeight: 400 }}>
                       {tab === "orders"
@@ -423,7 +449,11 @@ export default function Admin() {
                             })
                             : tab === "carousel"
                               ? "Manage your menu carousel"
-                              : "Manage checkout fees and payment QR"}
+                              : tab === "tables"
+                                ? "Manage table QR codes"
+                                : tab === "logs"
+                                  ? "Track admin actions"
+                                  : "Manage checkout fees and payment QR"}
                     </p>
                   </div>
 
@@ -459,7 +489,7 @@ export default function Admin() {
                   className="adm-filter-row no-scrollbar"
                   style={{
                     display: "flex",
-                    gap: 7,
+                    gap: 16,
                     overflowX: "auto",
                     WebkitOverflowScrolling: "touch",
                     marginBottom: 18,
@@ -467,26 +497,53 @@ export default function Admin() {
                     flexWrap: "nowrap",
                   }}
                 >
-                  {ORDER_FILTERS.map((fl) => (
-                    <button
-                      key={fl}
-                      onClick={() => setFilter(fl)}
-                      style={{
-                        flexShrink: 0,
-                        padding: "8px 16px",
-                        borderRadius: 99,
-                        fontSize: 13,
-                        fontWeight: 500,
-                        cursor: "pointer",
-                        transition: "all 0.15s",
-                        border: `1.5px solid ${filter === fl ? C.ink : C.border}`,
-                        background: filter === fl ? C.ink : C.surface,
-                        color: filter === fl ? C.white : C.mid,
-                      }}
-                    >
-                      {fl === "ready_for_pickup" ? "Ready" : fl.charAt(0).toUpperCase() + fl.slice(1)}
-                    </button>
-                  ))}
+                  <div style={{ display: "flex", gap: 7, flexShrink: 0 }}>
+                    {["all", "pending", "preparing", "ready_for_pickup"].map((fl) => (
+                      <button
+                        key={fl}
+                        onClick={() => setFilter(fl)}
+                        style={{
+                          flexShrink: 0,
+                          padding: "8px 16px",
+                          borderRadius: 99,
+                          fontSize: 13,
+                          fontWeight: 500,
+                          cursor: "pointer",
+                          transition: "all 0.15s",
+                          border: `1.5px solid ${filter === fl ? C.ink : C.border}`,
+                          background: filter === fl ? C.ink : C.surface,
+                          color: filter === fl ? C.white : C.mid,
+                        }}
+                      >
+                        {fl === "ready_for_pickup" ? "Ready" : fl.charAt(0).toUpperCase() + fl.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div style={{ width: 1, background: C.border, margin: "2px 0", flexShrink: 0 }} />
+
+                  <div style={{ display: "flex", gap: 7, flexShrink: 0 }}>
+                    {(["all", "pickup", "dine-in"] as const).map((tf) => (
+                      <button
+                        key={tf}
+                        onClick={() => setTypeFilter(tf)}
+                        style={{
+                          flexShrink: 0,
+                          padding: "8px 16px",
+                          borderRadius: 99,
+                          fontSize: 13,
+                          fontWeight: 500,
+                          cursor: "pointer",
+                          transition: "all 0.15s",
+                          border: `1.5px solid ${typeFilter === tf ? C.ink : C.border}`,
+                          background: typeFilter === tf ? C.ink : C.surface,
+                          color: typeFilter === tf ? C.white : C.mid,
+                        }}
+                      >
+                        {tf === "all" ? "All Types" : tf === "pickup" ? "Pickup Only" : "Dine-in Only"}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -592,6 +649,9 @@ export default function Admin() {
 
               {/* ── Settings tab ── */}
               {!loading && tab === "settings" && <SettingsManager />}
+
+              {/* ── Logs tab ── */}
+              {!loading && tab === "logs" && <AdminLogsManager />}
 
             </div>
           </motion.main>

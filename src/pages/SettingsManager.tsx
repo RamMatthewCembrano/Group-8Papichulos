@@ -4,12 +4,15 @@ import { toast } from "sonner";
 import { Loader2, UploadCloud, Image as ImageIcon, Save } from "lucide-react";
 import { C } from "./constants";
 import { Btn, Lbl } from "./AdminPrimitives";
+import { logAdminAction } from "../lib/logger";
 
 export function SettingsManager() {
   const [uploading, setUploading] = useState(false);
   const [timestamp, setTimestamp] = useState(Date.now());
   const [checkoutFee, setCheckoutFee] = useState<string>("0");
   const [savingFee, setSavingFee] = useState(false);
+  const [gcashDetails, setGcashDetails] = useState<string>("");
+  const [savingDetails, setSavingDetails] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -29,7 +32,21 @@ export function SettingsManager() {
         console.error("Failed to load checkout fee:", err);
       }
     };
+    const fetchDetails = async () => {
+      try {
+        const { data, error } = await supabase.storage.from("menu-items").download("settings/gcash-details.json");
+        if (error) return;
+        const text = await data.text();
+        const json = JSON.parse(text);
+        if (json.details !== undefined) {
+           setGcashDetails(json.details);
+        }
+      } catch (err) {
+        console.error("Failed to load GCash details:", err);
+      }
+    };
     fetchFee();
+    fetchDetails();
   }, []);
 
   const handleSaveFee = async () => {
@@ -42,10 +59,29 @@ export function SettingsManager() {
       
       if (error) throw error;
       toast.success("Checkout fee saved!");
+      logAdminAction("Updated Checkout Fee", `Set to ₱${parseFloat(checkoutFee) || 0}`);
     } catch (err: any) {
       toast.error(err.message || "Failed to save fee");
     } finally {
       setSavingFee(false);
+    }
+  };
+
+  const handleSaveDetails = async () => {
+    setSavingDetails(true);
+    try {
+      const blob = new Blob([JSON.stringify({ details: gcashDetails })], { type: 'application/json' });
+      const { error } = await supabase.storage
+        .from("menu-items")
+        .upload("settings/gcash-details.json", blob, { upsert: true, cacheControl: '0' });
+      
+      if (error) throw error;
+      toast.success("GCash Details saved!");
+      logAdminAction("Updated GCash Details", `Set to '${gcashDetails}'`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save details");
+    } finally {
+      setSavingDetails(false);
     }
   };
 
@@ -64,6 +100,7 @@ export function SettingsManager() {
       if (error) throw error;
       
       toast.success("QR Code updated successfully!");
+      logAdminAction("Updated QR Code", `File: ${file.name}`);
       setTimestamp(Date.now()); // cache bust
     } catch (err: any) {
       toast.error(err.message || "Failed to upload QR Code");
@@ -150,6 +187,24 @@ export function SettingsManager() {
             {uploading ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <ImageIcon size={16} />}
             {uploading ? "Uploading..." : "Upload New QR Code"}
           </Btn>
+        </div>
+
+        <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 16, alignItems: "center", textAlign: "center" }}>
+          <Lbl t="GCash Number / Name" />
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", width: "100%", maxWidth: 300 }}>
+            <input 
+              type="text" 
+              value={gcashDetails} 
+              onChange={(e) => setGcashDetails(e.target.value)} 
+              style={{ flex: 1, padding: "8px 12px", border: `1px solid ${C.border}`, borderRadius: 8, outline: "none" }}
+              placeholder="0912 345 6789 - Juan D."
+            />
+            <Btn onClick={handleSaveDetails} disabled={savingDetails}>
+              {savingDetails ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Save size={16} />}
+              Save
+            </Btn>
+          </div>
+          <p style={{ fontSize: 12, color: C.faint }}>This text will be shown below the QR code for easy copying.</p>
         </div>
       </div>
 

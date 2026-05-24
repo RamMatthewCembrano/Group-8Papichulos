@@ -9,7 +9,7 @@ import {
   DrawerFooter,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { ImageIcon, UploadCloud, Loader2, Check } from "lucide-react";
+import { ImageIcon, UploadCloud, Loader2, Check, Copy } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
@@ -37,21 +37,32 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
   const [receipt, setReceipt] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkoutFee, setCheckoutFee] = useState<number>(0);
+  const [gcashDetails, setGcashDetails] = useState<string>("");
   const [qrTimestamp] = useState(Date.now());
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const { data, error } = await supabase.storage.from("menu-items").download("settings/checkout-fee.json");
-        if (error) return;
-        const text = await data.text();
-        const json = JSON.parse(text);
-        if (json.fee !== undefined) {
-           setCheckoutFee(Number(json.fee) || 0);
+        if (!error) {
+          const text = await data.text();
+          const json = JSON.parse(text);
+          if (json.fee !== undefined) {
+             setCheckoutFee(Number(json.fee) || 0);
+          }
         }
-      } catch (err) {
-        // ignore
-      }
+      } catch (err) {}
+      
+      try {
+        const { data, error } = await supabase.storage.from("menu-items").download("settings/gcash-details.json");
+        if (!error) {
+          const text = await data.text();
+          const json = JSON.parse(text);
+          if (json.details !== undefined) {
+             setGcashDetails(json.details);
+          }
+        }
+      } catch (err) {}
     };
     fetchSettings();
   }, []);
@@ -547,10 +558,34 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
                     fontSize: "13px",
                     fontWeight: 700,
                     color: "#ffffff",
+                    marginBottom: gcashDetails ? "4px" : "0",
                   }}
                 >
                   Papicholo's CDO
                 </p>
+                {gcashDetails && (
+                  <div
+                    onClick={() => {
+                      navigator.clipboard.writeText(gcashDetails);
+                      toast.success("Copied to clipboard!");
+                    }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      backgroundColor: "#1c1b1b",
+                      padding: "6px 10px",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      border: "1px dashed #444748",
+                    }}
+                  >
+                    <span style={{ fontSize: "12px", color: "#c6c6c7", fontFamily: "'Inter', sans-serif", letterSpacing: "0.02em" }}>
+                      {gcashDetails}
+                    </span>
+                    <Copy size={12} color="#8e9192" />
+                  </div>
+                )}
               </div>
 
               {/* Receipt Upload */}

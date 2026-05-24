@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { AlertTriangle } from "lucide-react";
 import { C } from "./constants";
 import { Btn } from "./AdminPrimitives";
+import { logAdminAction } from "../lib/logger";
 
 interface CarouselImage {
   id: string;
@@ -66,6 +67,7 @@ export const CarouselManager = ({
     else {
       onEnabledChange(next);
       toast.success(next ? "Carousel enabled" : "Carousel hidden");
+      logAdminAction(next ? "Enabled Carousel" : "Disabled Carousel", "");
     }
     setTogglingEnabled(false);
   };
@@ -83,8 +85,10 @@ export const CarouselManager = ({
       .eq("id", 1)
       .then(({ error }) => {
         if (error) toast.error("Failed to save speed");
-        else
+        else {
           toast.success(`Speed: ${SPEEDS.find((s) => s.value === val)?.label}`);
+          logAdminAction("Changed Carousel Speed", `Set to ${SPEEDS.find((s) => s.value === val)?.label}`);
+        }
       });
   };
 
@@ -117,6 +121,7 @@ export const CarouselManager = ({
     else {
       onImagesChange([...images, data[0]]);
       toast.success("Image added");
+      logAdminAction("Added Carousel Image", `Name: ${file.name}`);
     }
 
     if (fileRef.current) fileRef.current.value = "";
@@ -141,6 +146,7 @@ export const CarouselManager = ({
     else {
       onImagesChange(images.filter((i) => i.id !== img.id));
       toast.success("Image removed");
+      logAdminAction("Deleted Carousel Image", `Name: ${img.label || 'Unknown'}`);
     }
     setDeletingId(null);
   };

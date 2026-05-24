@@ -13,7 +13,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { C } from "./constants";
 
-type TabKey = "orders" | "inventory" | "history" | "carousel" | "settings" | "tables";
+type TabKey = "orders" | "inventory" | "history" | "carousel" | "settings" | "tables" | "logs";
 
 
 interface AdminSidebarProps {
@@ -29,6 +29,7 @@ const NAV: { key: TabKey; Icon: React.ElementType; label: string }[] = [
   { key: "history", Icon: History, label: "History" },
   { key: "carousel", Icon: Images, label: "Carousel" },
   { key: "tables", Icon: Table, label: "Tables" },
+  { key: "logs", Icon: ClipboardList, label: "Logs" },
   { key: "settings", Icon: Settings, label: "Settings" },
 ];
 

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { C } from "./constants";
 
-type TabKey = "orders" | "inventory" | "history" | "carousel" | "settings" | "tables";
+type TabKey = "orders" | "inventory" | "history" | "carousel" | "settings" | "tables" | "logs";
 
 
 // ── Top bar ───────────────────────────────────────────────────────────────────
@@ -122,6 +122,7 @@ const NAV: { key: TabKey; Icon: React.ElementType; label: string }[] = [
   { key: "history", Icon: History, label: "History" },
   { key: "carousel", Icon: Images, label: "Carousel" },
   { key: "tables", Icon: LayoutGrid, label: "Tables" },
+  { key: "logs", Icon: ClipboardList, label: "Logs" },
   { key: "settings", Icon: Settings, label: "Settings" },
 ];
 

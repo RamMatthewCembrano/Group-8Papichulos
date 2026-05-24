@@ -5,22 +5,23 @@ import { useCart } from "@/contexts/CartContext";
 
 interface CartBarProps {
   onOpen: () => void;
+  hasActiveOrder?: boolean;
 }
 
-const CartBar = ({ onOpen }: CartBarProps) => {
+const CartBar = ({ onOpen, hasActiveOrder }: CartBarProps) => {
   const { totalItems, totalPrice } = useCart();
+  const bottomOffset = hasActiveOrder ? 70 : 0; // OrderStatusBar height is ~70px
 
   return (
     <AnimatePresence>
       {totalItems > 0 && (
         <motion.div
           initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
+          animate={{ y: 0, opacity: 1, bottom: bottomOffset }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           style={{
             position: "fixed",
-            bottom: 0,
             left: 0,
             right: 0,
             zIndex: 50,
