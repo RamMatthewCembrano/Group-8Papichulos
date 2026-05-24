@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { C, HISTORY_FILTERS } from "./constants";
 import { Pill, Lbl, HR, Btn } from "./AdminPrimitives";
 import { Order } from "../types";
+import { logAdminAction } from "../lib/logger";
 import * as xlsx from "xlsx";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -380,6 +381,7 @@ const OrderList = ({
                   toast.error("Failed to restore order");
                 } else {
                   toast.success("Order restored successfully");
+                  logAdminAction("Restored Order", `ID: ${reversingOrder} - status reverted to pending`);
                   onOrdersChange(orders.map(o => o.id === reversingOrder ? { ...o, status: "pending" } : o));
                   setReversingOrder(null);
                 }
@@ -642,6 +644,7 @@ export const HistoryPanel = ({
         )
       );
 
+      logAdminAction("Cleared Old History", `Deleted ${oldCount} orders older than 60 days`);
       toast.success(`Cleared ${oldCount} old order${oldCount !== 1 ? "s" : ""}`);
     }
 
