@@ -1,0 +1,26 @@
+name: Daily Supabase Backup
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at Midnight UTC
+  workflow_dispatch: 
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run pg_dump to backup database
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          pg_dump "$SUPABASE_DB_URL" --clean --if-exists > backup.sql
+
+      - name: Upload Backup to GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup-${{ github.run_id }}
+          path: backup.sql
+          retention-days: 30
