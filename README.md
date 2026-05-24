@@ -19,6 +19,11 @@ A full-stack, real-time restaurant ordering and management system designed for b
 - **Order History & Reversal**: View all past orders, filter by status, and securely restore accidentally cancelled orders (password protected).
 - **Admin Action Logs**: Comprehensive system audit log that tracks who changed what (e.g. menu edits, order status updates, setting changes) with human-readable timestamps.
 - **Store Settings**: Dynamically update store-wide settings such as checkout fees and GCash payment details.
+- **Automated Email Reports (Edge Functions)**:
+  - **Daily Sales Report**: Generates an end-of-day breakdown (Revenue, Top 5 items, Order statuses) sent nightly.
+  - **Weekly Admin Logs**: Compiles all admin actions into a `.csv` and emails them weekly before securely clearing old logs.
+  - **Bi-Monthly Order History**: Emails a full `.csv` backup of all store orders every 2 months.
+- **Automated Database Backups**: Powered by a GitHub Actions Cron job to securely dump and save the entire PostgreSQL database every night at midnight.
 
 ## Tech Stack
 
