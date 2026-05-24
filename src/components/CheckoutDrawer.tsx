@@ -125,6 +125,32 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
       return;
     }
 
+    // --- RATE LIMIT CHECK ---
+    const RATE_LIMIT_KEY = "papi_order_rate_limit";
+    const MAX_ORDERS = 5;
+    const TIME_WINDOW_MS = 60 * 1000; // 1 minute window
+    const now = Date.now();
+    
+    try {
+      const historyStr = localStorage.getItem(RATE_LIMIT_KEY);
+      let timestamps: number[] = historyStr ? JSON.parse(historyStr) : [];
+      
+      // Filter out timestamps older than the time window
+      timestamps = timestamps.filter(t => now - t < TIME_WINDOW_MS);
+      
+      if (timestamps.length >= MAX_ORDERS) {
+        toast.error("You are placing orders too quickly. Please wait a minute.");
+        return;
+      }
+      
+      // Add current timestamp and save
+      timestamps.push(now);
+      localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(timestamps));
+    } catch (err) {
+      console.error("Rate limit parsing error:", err);
+    }
+    // -------------------------
+
     setIsSubmitting(true);
 
     try {
