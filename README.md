@@ -5,18 +5,20 @@ A full-stack, real-time restaurant ordering and management system designed for b
 ## Key Features
 
 ### Customer Experience
-- **Interactive Menu & Cart**: Browse food items by category, view dynamic prices, and manage quantities in a slide-out cart.
+- **Interactive Menu & Persistent Cart**: Browse food items by category, view dynamic prices, and manage quantities in a slide-out cart that saves your progress locally.
 - **Flexible Ordering**: Support for **Dine-In** (scan table QR code or select manually) and **Store Pickup** (auto-generated pickup codes).
-- **Payment Integration**: Choose between "Pay at Counter" or "GCash" (includes a receipt image upload feature).
+- **Payment Integration**: Choose between "Pay at Counter" or "GCash" (includes a receipt image upload feature and easy-copy GCash details).
 - **Live Order Tracking**: A floating status bar and an animated full-screen stepper track your order in real-time ("Pending" → "Preparing" → "Ready to Serve" → "Completed").
 - **Order History**: Track past and active orders directly on the device.
+- **Smart Session Management**: For shared Dine-In devices, inactive sessions automatically reset after 4 hours to ensure privacy for the next customer.
 
 ### Admin Dashboard
-- **Real-Time Kanban Board**: Live view of incoming orders. Admins can move orders through the preparation pipeline with a single click.
-- **Menu Management**: Full CRUD interface to add, edit, or delete menu items and categories. Includes direct cloud image uploads.
+- **Real-Time Kanban Board**: Live view of incoming orders with advanced filtering combinations (Status + Order Type). Admins can move orders through the preparation pipeline with a single click.
+- **Menu Management**: Full CRUD interface to add, edit, or delete menu items and categories. Includes direct cloud image uploads and dynamic availability toggling.
 - **Table & QR Code Manager**: Manage active tables and automatically generate downloadable QR codes that map directly to the table's ordering link.
 - **Order History & Reversal**: View all past orders, filter by status, and securely restore accidentally cancelled orders (password protected).
-- **Store Settings**: Dynamically update store-wide settings such as checkout fees.
+- **Admin Action Logs**: Comprehensive system audit log that tracks who changed what (e.g. menu edits, order status updates, setting changes) with human-readable timestamps.
+- **Store Settings**: Dynamically update store-wide settings such as checkout fees and GCash payment details.
 
 ## Tech Stack
 
