@@ -10,7 +10,9 @@ import {
   ChefHat,
   X,
   AlertTriangle,
+  Copy,
 } from "lucide-react";
+import { toast } from "sonner";
 import { C } from "./constants";
 import { Pill, Btn, Lbl, HR } from "./AdminPrimitives";
 import { Order } from "../types";
@@ -283,12 +285,12 @@ export const OrderCard = ({
                 letterSpacing: "0.05em",
                 padding: "3px 6px",
                 borderRadius: 4,
-                backgroundColor: isPickup ? "#F3E8FF" : "#E0F2FE", // Purple for Pickup, Blue for In-House
+                backgroundColor: isPickup ? "#F3E8FF" : "#E0F2FE", // Purple for Pickup, Blue for Dine In
                 color: isPickup ? "#6B21A8" : "#0369A1",
                 textTransform: "uppercase"
               }}
             >
-              {isPickup ? "Pickup" : "In-House"}
+              {isPickup ? "Pickup" : "Dine In"}
             </span>
 
           </div>
@@ -393,8 +395,35 @@ export const OrderCard = ({
                 <div style={{ fontSize: 13, color: C.faint, marginBottom: 8 }}>
                   Pickup Code — <span style={{ color: C.ink, fontWeight: 700, letterSpacing: "0.03em" }}>{order.table_number.startsWith("PUP-") ? order.table_number : "STORE-PICKUP"}</span>
                 </div>
-                <div style={{ fontSize: 13, color: C.faint, marginBottom: 14 }}>
-                  Phone — <span style={{ color: C.mid, fontWeight: 500 }}>{order.phone_number || "—"}</span>
+                <div style={{ fontSize: 13, color: C.faint, marginBottom: 14, display: "flex", alignItems: "center", gap: 6 }}>
+                  Phone —{" "}
+                  {order.phone_number ? (
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigator.clipboard.writeText(order.phone_number || "");
+                        toast.success("Phone number copied!");
+                      }}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        color: C.mid,
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        background: C.lift,
+                        padding: "2px 8px",
+                        borderRadius: 4,
+                        border: `1px solid ${C.line}`,
+                      }}
+                      title="Copy phone number"
+                    >
+                      {order.phone_number}
+                      <Copy size={12} color={C.faint} />
+                    </div>
+                  ) : (
+                    <span style={{ color: C.mid, fontWeight: 500 }}>—</span>
+                  )}
                 </div>
               </>
             )}

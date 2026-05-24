@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 
 import { C } from "./constants";
 import { Btn } from "./AdminPrimitives";
+import { logAdminAction } from "../lib/logger";
 
 type TableRow = {
   id: string;
@@ -121,6 +122,7 @@ const TablesManager = () => {
     toast.success(
       `Added/activated ${targets.length} table${targets.length !== 1 ? "s" : ""}`,
     );
+    logAdminAction("Added/Activated Tables", `Targets: ${targets.join(', ')}`);
     await fetchTables();
     setNewTable("");
     setSaving(false);
@@ -143,6 +145,7 @@ const TablesManager = () => {
     }
 
     toast.success(`Removed table ${row.table_number}`);
+    logAdminAction("Deactivated Table", `Table ${row.table_number}`);
     await fetchTables();
     setDeletingId(null);
   };

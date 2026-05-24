@@ -11,7 +11,7 @@ import Footer from "@/components/Footer";
 import UserHistoryDrawer from "@/components/UserHistoryDrawer";
 import { AnimatePresence } from "framer-motion";
 
-const getStorageKey = (isPickup: boolean) => 
+const getStorageKey = (isPickup: boolean) =>
   isPickup ? "papi_pickup_active_order_id" : "papi_active_order_id";
 
 const IndexContent = ({ isPickup = false }: { isPickup?: boolean }) => {
@@ -24,6 +24,47 @@ const IndexContent = ({ isPickup = false }: { isPickup?: boolean }) => {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [trackerOrderId, setTrackerOrderId] = useState<string | null>(null);
+
+  // 4-hour inactivity reset for Dine-In
+  useEffect(() => {
+    if (isPickup) return;
+
+    const EXPIRATION_MS = 4 * 60 * 60 * 1000; // 4 hours
+
+    const checkActivity = () => {
+      const lastActivity = localStorage.getItem("papi_last_activity");
+      if (lastActivity) {
+        if (Date.now() - parseInt(lastActivity, 10) > EXPIRATION_MS) {
+          localStorage.removeItem("papi_active_order_id");
+          localStorage.removeItem("papi_order_history");
+          localStorage.removeItem("papi_current_table_number");
+          localStorage.removeItem("papi_last_activity");
+          localStorage.removeItem("papi_cart");
+          window.location.reload();
+        }
+      }
+    };
+
+    checkActivity();
+
+    const updateActivity = () => {
+      localStorage.setItem("papi_last_activity", Date.now().toString());
+    };
+
+    updateActivity();
+    window.addEventListener("click", updateActivity);
+    window.addEventListener("touchstart", updateActivity);
+    window.addEventListener("keydown", updateActivity);
+
+    const interval = setInterval(checkActivity, 60000);
+
+    return () => {
+      window.removeEventListener("click", updateActivity);
+      window.removeEventListener("touchstart", updateActivity);
+      window.removeEventListener("keydown", updateActivity);
+      clearInterval(interval);
+    };
+  }, [isPickup]);
 
   const handleOrderConfirmed = (id: string) => {
     setOrderId(id);
@@ -46,11 +87,11 @@ const IndexContent = ({ isPickup = false }: { isPickup?: boolean }) => {
       <Footer />
 
       {/* Cart bar — only when no active order, or slides above status bar */}
-      <CartBar onOpen={() => setCartOpen(true)} />
+      <CartBar onOpen={() => setCartOpen(true)} hasActiveOrder={!!orderId} />
 
-      {/* Floating live order status bar — sits above the cart bar */}
+      {/* Floating live order status bar — sits below the cart bar */}
       {orderId && (
-        <div style={{ paddingBottom: 72 /* leave room for CartBar if visible */ }}>
+        <div style={{ paddingBottom: 72 /* leave room for OrderStatusBar if visible */ }}>
           <OrderStatusBar
             orderId={orderId}
             onTap={() => setTrackerOpen(true)}

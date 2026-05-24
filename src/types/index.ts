@@ -49,3 +49,11 @@ export interface CarouselSettings {
   enabled: boolean;
   speed: number;
 }
+
+export interface AdminLog {
+  id: string;
+  action: string;
+  details: string | null;
+  admin_email: string | null;
+  created_at: string;
+}

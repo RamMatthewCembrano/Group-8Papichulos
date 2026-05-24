@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { C } from "./constants";
 import { Btn, Lbl } from "./AdminPrimitives";
+import { logAdminAction } from "../lib/logger";
 
 interface CategoryManagerProps {
   categories: string[];
@@ -39,6 +40,7 @@ export const CategoryManager = ({
       onCategoriesChange(updated);
       setNewCat("");
       toast.success(`"${name}" added`);
+      logAdminAction("Added Category", `Name: ${name}`);
     }
     setSaving(false);
   };
@@ -78,6 +80,7 @@ export const CategoryManager = ({
     } else {
       onCategoriesChange(categories.filter((c) => c !== name));
       toast.success(`"${name}" removed`);
+      logAdminAction("Deleted Category", `Name: ${name}`);
     }
     setDeleting(null);
   };

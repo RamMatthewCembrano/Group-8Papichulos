@@ -179,29 +179,7 @@ const OrderList = ({
                   </div>
                 </div>
 
-                {/* GCash receipt thumbnail (if provided) */}
-                {(order.payment_method === "gcash" || order.payment_method === "online") && order.receipt_url && (
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(order.receipt_url!, "_blank");
-                    }}
-                    title="View Receipt"
-                    style={{
-                      width: 38,
-                      height: 38,
-                      borderRadius: 8,
-                      overflow: "hidden",
-                      flexShrink: 0,
-                      border: `1px solid ${C.line}`,
-                      background: C.lift,
-                      marginRight: 6,
-                      cursor: "zoom-in",
-                    }}
-                  >
-                    <img src={order.receipt_url} alt="Receipt" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  </div>
-                )}
+
 
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   <div
