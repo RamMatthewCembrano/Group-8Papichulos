@@ -10,20 +10,27 @@ A full-stack, real-time restaurant ordering and management system designed for b
 - **Payment Integration**: Choose between "Pay at Counter" or "GCash" (includes a receipt image upload feature and easy-copy GCash details).
 - **Live Order Tracking**: A floating status bar and an animated full-screen stepper track your order in real-time ("Pending" → "Preparing" → "Ready to Serve" → "Completed").
 - **Order History**: Track past and active orders directly on the device.
+- **Dynamic Footer Carousel**: Infinite scrolling image carousel at the bottom of the page showing promos, sponsors, or food photography.
 - **Smart Session Management**: For shared Dine-In devices, inactive sessions automatically reset after 4 hours to ensure privacy for the next customer.
 
 ### Admin Dashboard
 - **Real-Time Kanban Board**: Live view of incoming orders with advanced filtering combinations (Status + Order Type). Admins can move orders through the preparation pipeline with a single click.
 - **Menu Management**: Full CRUD interface to add, edit, or delete menu items and categories. Includes direct cloud image uploads and dynamic availability toggling.
+- **Carousel Management**: Manage the footer image carousel (upload/delete images, toggle visibility, and adjust scroll speeds).
 - **Table & QR Code Manager**: Manage active tables and automatically generate downloadable QR codes that map directly to the table's ordering link.
 - **Order History & Reversal**: View all past orders, filter by status, and securely restore accidentally cancelled orders (password protected).
 - **Admin Action Logs**: Comprehensive system audit log that tracks who changed what (e.g. menu edits, order status updates, setting changes) with human-readable timestamps.
 - **Store Settings**: Dynamically update store-wide settings such as checkout fees and GCash payment details.
+
+### System Architecture & Optimizations
+- **Client-Side Image Compression**: Heavy integration of `browser-image-compression` to drastically reduce file sizes for GCash receipts, menu items, and carousel images *before* they upload, protecting storage limits.
+- **Automated Storage Cleanup**: Orphaned images are automatically deleted from Supabase Storage when their corresponding database rows are removed, preventing bucket bloat.
 - **Automated Email Reports (Edge Functions)**:
-  - **Daily Sales Report**: Generates an end-of-day breakdown (Revenue, Top 5 items, Order statuses) sent nightly.
+  - **Daily Sales Report**: Generates an end-of-day breakdown (Revenue, Top 5 items, Order statuses) sent nightly via Resend.
   - **Weekly Admin Logs**: Compiles all admin actions into a `.csv` and emails them weekly before securely clearing old logs.
   - **Bi-Monthly Order History**: Emails a full `.csv` backup of all store orders every 2 months.
 - **Automated Database Backups**: Powered by a GitHub Actions Cron job to securely dump and save the entire PostgreSQL database every night at midnight.
+- **CI/CD Deployment**: Fully integrated with GitHub and Vercel for continuous automated deployments.
 
 ## Tech Stack
 

@@ -1,6 +1,7 @@
 import { formatPrice } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
+import imageCompression from "browser-image-compression";
 import {
   Drawer,
   DrawerContent,
@@ -125,6 +126,32 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
       return;
     }
 
+    // --- RATE LIMIT CHECK ---
+    const RATE_LIMIT_KEY = "papi_order_rate_limit";
+    const MAX_ORDERS = 5;
+    const TIME_WINDOW_MS = 60 * 1000; // 1 minute window
+    const now = Date.now();
+    
+    try {
+      const historyStr = localStorage.getItem(RATE_LIMIT_KEY);
+      let timestamps: number[] = historyStr ? JSON.parse(historyStr) : [];
+      
+      // Filter out timestamps older than the time window
+      timestamps = timestamps.filter(t => now - t < TIME_WINDOW_MS);
+      
+      if (timestamps.length >= MAX_ORDERS) {
+        toast.error("You are placing orders too quickly. Please wait a minute.");
+        return;
+      }
+      
+      // Add current timestamp and save
+      timestamps.push(now);
+      localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(timestamps));
+    } catch (err) {
+      console.error("Rate limit parsing error:", err);
+    }
+    // -------------------------
+
     setIsSubmitting(true);
 
     try {
@@ -135,9 +162,17 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = `receipts/${fileName}`;
 
+        // Compress image before upload
+        const options = {
+          maxSizeMB: 0.1, // 100KB max size
+          maxWidthOrHeight: 1200,
+          useWebWorker: true
+        };
+        const compressedFile = await imageCompression(receipt, options);
+
         const { error: uploadError } = await supabase.storage
           .from("menu-items")
-          .upload(filePath, receipt);
+          .upload(filePath, compressedFile);
 
         if (uploadError) throw uploadError;
 

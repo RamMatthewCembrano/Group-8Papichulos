@@ -2,7 +2,7 @@ name: Daily Supabase Backup
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs every day at Midnight UTC
+    - cron: '0 16 * * *' # Runs every day at 12:00 AM (Midnight) UTC+8 (16:00 UTC)
   workflow_dispatch: 
 
 jobs:
@@ -24,4 +24,4 @@ jobs:
         with:
           name: database-backup-${{ github.run_id }}
           path: backup.sql
-          retention-days: 30
+          retention-days: 90

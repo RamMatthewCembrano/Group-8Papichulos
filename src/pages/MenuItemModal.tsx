@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Loader2, Upload, X, Check } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import imageCompression from "browser-image-compression";
 import { C } from "./constants";
 import { Btn, Lbl } from "./AdminPrimitives";
 import { MenuItem } from "../types";
@@ -47,7 +48,16 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
     setUploading(true);
     const file = e.target.files[0];
     const path = `menu/${Date.now()}.${file.name.split(".").pop()}`;
-    const { error } = await supabase.storage.from("menu-items").upload(path, file);
+    
+    // Compress image before upload
+    const options = {
+      maxSizeMB: 0.2, // 200KB max size for menu items
+      maxWidthOrHeight: 1920,
+      useWebWorker: true
+    };
+    const compressedFile = await imageCompression(file, options);
+
+    const { error } = await supabase.storage.from("menu-items").upload(path, compressedFile);
     if (!error) {
       const { data } = supabase.storage.from("menu-items").getPublicUrl(path);
       setForm((p) => ({ ...p, image: data.publicUrl }));
