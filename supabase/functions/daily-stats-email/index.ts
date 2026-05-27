@@ -37,7 +37,10 @@ serve(async (req) => {
       day: '2-digit'
     })
 
-    const todayStr = manilaFormatter.format(new Date())
+    // If the cron runs at exactly 12:00 AM, `new Date()` is already the NEXT day.
+    // Subtracting 4 hours ensures we safely evaluate the date as the "day that just finished".
+    const targetDate = new Date(Date.now() - 4 * 60 * 60 * 1000)
+    const todayStr = manilaFormatter.format(targetDate)
 
     // Only include orders that happened TODAY in Manila time
     const todayOrders = (orders || []).filter(o => manilaFormatter.format(new Date(o.created_at)) === todayStr)

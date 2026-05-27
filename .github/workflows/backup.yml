@@ -24,4 +24,4 @@ jobs:
         with:
           name: database-backup-${{ github.run_id }}
           path: backup.sql
-          retention-days: 30
+          retention-days: 90

@@ -12,6 +12,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import imageCompression from "browser-image-compression";
 import { AlertTriangle } from "lucide-react";
 import { C } from "./constants";
 import { Btn } from "./AdminPrimitives";
@@ -33,10 +34,10 @@ interface CarouselManagerProps {
 }
 
 const SPEEDS = [
-  { label: "Slow", value: 0.3 },
-  { label: "Medium", value: 0.8 },
-  { label: "Fast", value: 1.5 },
-  { label: "Ultra Fast", value: 2.0 },
+  { label: "Slow", value: 0.5 },
+  { label: "Medium", value: 1.0 },
+  { label: "Fast", value: 2.0 },
+  { label: "Ultra Fast", value: 3.5 },
 ];
 
 export const CarouselManager = ({
@@ -99,9 +100,18 @@ export const CarouselManager = ({
     setUploading(true);
 
     const path = `carousel/${Date.now()}.${file.name.split(".").pop()}`;
+    
+    // Compress image before upload
+    const options = {
+      maxSizeMB: 0.2, // 200KB max size for carousel images
+      maxWidthOrHeight: 1920,
+      useWebWorker: true
+    };
+    const compressedFile = await imageCompression(file, options);
+
     const { error: uploadErr } = await supabase.storage
       .from("menu-items")
-      .upload(path, file);
+      .upload(path, compressedFile);
     if (uploadErr) {
       toast.error("Upload failed: " + uploadErr.message);
       setUploading(false);
@@ -147,6 +157,18 @@ export const CarouselManager = ({
       onImagesChange(images.filter((i) => i.id !== img.id));
       toast.success("Image removed");
       logAdminAction("Deleted Carousel Image", `Name: ${img.label || 'Unknown'}`);
+      
+      // Delete the actual image file from storage
+      if (img.url) {
+        try {
+          const urlParts = img.url.split("/menu-items/");
+          if (urlParts.length === 2) {
+            await supabase.storage.from("menu-items").remove([urlParts[1]]);
+          }
+        } catch (e) {
+          console.error("Failed to delete carousel image from storage:", e);
+        }
+      }
     }
     setDeletingId(null);
   };

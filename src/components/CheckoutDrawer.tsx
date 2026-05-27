@@ -1,6 +1,7 @@
 import { formatPrice } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
+import imageCompression from "browser-image-compression";
 import {
   Drawer,
   DrawerContent,
@@ -161,9 +162,17 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = `receipts/${fileName}`;
 
+        // Compress image before upload
+        const options = {
+          maxSizeMB: 0.1, // 100KB max size
+          maxWidthOrHeight: 1200,
+          useWebWorker: true
+        };
+        const compressedFile = await imageCompression(receipt, options);
+
         const { error: uploadError } = await supabase.storage
           .from("menu-items")
-          .upload(filePath, receipt);
+          .upload(filePath, compressedFile);
 
         if (uploadError) throw uploadError;
 

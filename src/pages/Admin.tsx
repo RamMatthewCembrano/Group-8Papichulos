@@ -313,12 +313,25 @@ export default function Admin() {
   const executeDeleteItem = async () => {
     if (!confirmDeleteMenu) return;
     const { id } = confirmDeleteMenu;
+    const itemToDelete = items.find((i) => i.id === id);
 
     const { error } = await supabase.from("menu_items").delete().eq("id", id);
     if (!error) {
       setItems((p) => p.filter((i) => i.id !== id));
       toast.success("Removed");
       logAdminAction("Deleted Menu Item", `ID: ${id}, Name: ${confirmDeleteMenu.name}`);
+      
+      // Delete the actual image file from storage
+      if (itemToDelete?.image && !itemToDelete.image.includes("placeholder")) {
+        try {
+          const urlParts = itemToDelete.image.split("/menu-items/");
+          if (urlParts.length === 2) {
+            await supabase.storage.from("menu-items").remove([urlParts[1]]);
+          }
+        } catch (e) {
+          console.error("Failed to delete image:", e);
+        }
+      }
     } else {
       toast.error(error.message || "Failed to remove item.");
     }
