@@ -163,7 +163,7 @@ const OrderList = ({
                   >
                     {order.customer_name}
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                     <Pill status={order.status} isPickup={pickup} />
                     <span
                       style={{
@@ -172,9 +172,10 @@ const OrderList = ({
                         display: "flex",
                         alignItems: "center",
                         gap: 4,
+                        whiteSpace: "nowrap",
                       }}
                     >
-                      <Clock size={11} strokeWidth={1.5} />
+                      <Clock size={11} strokeWidth={1.5} style={{ flexShrink: 0 }} />
                       {fmtTime(order.created_at)}
                     </span>
                   </div>

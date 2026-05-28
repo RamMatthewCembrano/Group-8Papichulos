@@ -163,7 +163,7 @@ export default function Admin() {
           .from("orders")
           .select("*")
           .order("created_at", { ascending: false }),
-        supabase.from("categories").select("name").order("name"),
+        supabase.from("categories").select("name").order("sort_order", { ascending: true }),
         supabase
           .from("carousel_images")
           .select("*")
@@ -243,8 +243,8 @@ export default function Admin() {
       if (status === "completed") toast.success("Order marked as served ✓");
       if (status === "cancelled")
         toast("Order cancelled", { description: "Moved to history" });
-      const order = orders.find(o => o.id === id);
-      const customerName = order?.customer_name || 'Unknown';
+      const { data: orderData } = await supabase.from("orders").select("customer_name").eq("id", id).single();
+      const customerName = orderData?.customer_name || 'Unknown';
       logAdminAction("Updated Order Status", `Customer: ${customerName} - changed to '${status}' | ID: ${id}`);
     }
   };

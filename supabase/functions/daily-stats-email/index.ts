@@ -160,9 +160,10 @@ serve(async (req) => {
     return new Response(JSON.stringify({ message: 'Daily stats emailed successfully', ordersProcessed: todayOrders.length }), {
       headers: { 'Content-Type': 'application/json' },
     })
-  } catch (error: any) {
-    console.error(error)
-    return new Response(JSON.stringify({ error: error.message }), {
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error(err)
+    return new Response(JSON.stringify({ error: err.message }), {
       headers: { 'Content-Type': 'application/json' },
       status: 400,
     })

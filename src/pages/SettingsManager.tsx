@@ -60,8 +60,8 @@ export function SettingsManager() {
       if (error) throw error;
       toast.success("Checkout fee saved!");
       logAdminAction("Updated Checkout Fee", `Set to ₱${parseFloat(checkoutFee) || 0}`);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to save fee");
+    } catch (err: unknown) {
+      toast.error((err as Error).message || "Failed to save fee");
     } finally {
       setSavingFee(false);
     }
@@ -78,8 +78,8 @@ export function SettingsManager() {
       if (error) throw error;
       toast.success("GCash Details saved!");
       logAdminAction("Updated GCash Details", `Set to '${gcashDetails}'`);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to save details");
+    } catch (err: unknown) {
+      toast.error((err as Error).message || "Failed to save details");
     } finally {
       setSavingDetails(false);
     }
@@ -102,8 +102,8 @@ export function SettingsManager() {
       toast.success("QR Code updated successfully!");
       logAdminAction("Updated QR Code", `File: ${file.name}`);
       setTimestamp(Date.now()); // cache bust
-    } catch (err: any) {
-      toast.error(err.message || "Failed to upload QR Code");
+    } catch (err: unknown) {
+      toast.error((err as Error).message || "Failed to upload QR Code");
     } finally {
       setUploading(false);
     }

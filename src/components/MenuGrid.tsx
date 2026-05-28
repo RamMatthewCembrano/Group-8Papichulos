@@ -25,7 +25,7 @@ const MenuGrid = () => {
           supabase
             .from("categories")
             .select("name")
-            .order("name", { ascending: true }),
+            .order("sort_order", { ascending: true }),
         ]);
 
       if (menuError) {

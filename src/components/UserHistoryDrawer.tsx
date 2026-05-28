@@ -16,6 +16,7 @@ const getHistoryKey = (isPickup: boolean) =>
   isPickup ? "papi_pickup_order_history" : "papi_order_history";
 
 const UserHistoryDrawer = ({ open, onClose, onSelectOrder, isPickup = false }: UserHistoryDrawerProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -39,7 +40,9 @@ const UserHistoryDrawer = ({ open, onClose, onSelectOrder, isPickup = false }: U
         let historyIds = JSON.parse(historyStr);
         historyIds = historyIds.filter((id: string) => id !== orderId);
         localStorage.setItem(historyKey, JSON.stringify(historyIds));
-      } catch (err) { }
+      } catch (err) {
+        console.error("Failed to parse history ids", err);
+      }
     }
   };
 
