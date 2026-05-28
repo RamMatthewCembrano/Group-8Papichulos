@@ -1,7 +1,6 @@
 import { formatPrice } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
-import imageCompression from "browser-image-compression";
 import {
   Drawer,
   DrawerContent,
@@ -127,8 +126,11 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
     }
 
     if (isPickup) {
-      const phoneDigits = phone.replace(/[^0-9]/g, "");
-      if (phoneDigits.length !== 11) {
+      if (/[^0-9]/.test(phone)) {
+        toast.error("Phone number can only contain digits.");
+        return;
+      }
+      if (phone.length !== 11) {
         toast.error("Phone number must be exactly 11 digits (e.g. 09123456789).");
         return;
       }
@@ -176,6 +178,7 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
         const filePath = `receipts/${fileName}`;
 
         // Compress image before upload
+        const imageCompression = (await import("browser-image-compression")).default;
         const options = {
           maxSizeMB: 0.1, // 100KB max size
           maxWidthOrHeight: 1200,
@@ -334,6 +337,7 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
                 id="name"
                 type="text"
                 placeholder="Juan D."
+                maxLength={15}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -427,8 +431,8 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
                 <label htmlFor="phone" style={labelStyle}>Phone Number</label>
                 <input
                   id="phone"
-                  type="tel"
-                  placeholder="0912 345 6789"
+                  type="text"
+                  placeholder="09123456789"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required={isPickup}

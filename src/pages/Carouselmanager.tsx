@@ -111,7 +111,10 @@ export const CarouselManager = ({
 
     const { error: uploadErr } = await supabase.storage
       .from("menu-items")
-      .upload(path, compressedFile);
+      .upload(path, compressedFile, {
+        cacheControl: "2592000",
+        upsert: true,
+      });
     if (uploadErr) {
       toast.error("Upload failed: " + uploadErr.message);
       setUploading(false);

@@ -274,9 +274,7 @@ export const OrderCard = ({
                 fontSize: 16,
                 fontWeight: 500,
                 color: C.ink,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
+                wordBreak: "break-word",
               }}
             >
               {order.customer_name}
