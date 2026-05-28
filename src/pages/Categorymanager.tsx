@@ -283,6 +283,7 @@ export const CategoryManager = ({
           </div>
         </div>
       </div>
+      </div>
 
       {/* Custom Confirmation Modal — Portal to body for true viewport centering */}
       {createPortal(
