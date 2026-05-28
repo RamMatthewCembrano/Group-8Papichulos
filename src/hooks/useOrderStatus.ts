@@ -10,6 +10,7 @@ export interface LiveOrder {
   table_number: string;
   created_at: string;
   order_items: { name: string; quantity: number; price: number }[];
+  payment_method?: string;
 }
 
 const FIXED_WAIT_MINUTES = 15; // estimate for ~15–20 min range
@@ -34,7 +35,7 @@ export function useOrderStatus(orderId: string | null) {
 
       const { data, error } = await supabase
         .from("orders")
-        .select("id, status, customer_name, table_number, created_at, order_items")
+        .select("id, status, customer_name, table_number, created_at, order_items, payment_method")
         .eq("id", orderId)
         .single();
 
