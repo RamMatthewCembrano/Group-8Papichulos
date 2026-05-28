@@ -8,9 +8,10 @@ import { useCart } from "@/contexts/CartContext";
 interface MenuCardProps {
   item: MenuItem;
   onSelect?: () => void;
+  priority?: boolean;
 }
 
-const MenuCard = ({ item, onSelect }: MenuCardProps) => {
+const MenuCard = ({ item, onSelect, priority = false }: MenuCardProps) => {
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -46,7 +47,8 @@ const MenuCard = ({ item, onSelect }: MenuCardProps) => {
           src={item.image}
           alt={item.name}
           onLoad={() => setImgLoaded(true)}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          {...(priority ? { fetchpriority: "high" } : {})}
           style={{
             position: "absolute",
             inset: 0,

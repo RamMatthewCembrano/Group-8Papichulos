@@ -159,11 +159,12 @@ const MenuGrid = () => {
 
       <div className="grid-responsive px-5 pb-20">
         {filtered.length > 0 ? (
-          filtered.map((item) => (
+          filtered.map((item, index) => (
             <MenuCard
               key={item.id}
               item={item}
               onSelect={() => setSelectedItem(item)}
+              priority={index < 4}
             />
           ))
         ) : (

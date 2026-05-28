@@ -57,7 +57,10 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
     };
     const compressedFile = await imageCompression(file, options);
 
-    const { error } = await supabase.storage.from("menu-items").upload(path, compressedFile);
+    const { error } = await supabase.storage.from("menu-items").upload(path, compressedFile, {
+      cacheControl: "2592000",
+      upsert: true,
+    });
     if (!error) {
       const { data } = supabase.storage.from("menu-items").getPublicUrl(path);
       setForm((p) => ({ ...p, image: data.publicUrl }));

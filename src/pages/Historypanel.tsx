@@ -345,7 +345,7 @@ const OrderList = ({
             <div style={{ fontSize: 14, color: C.faint, marginBottom: 20 }}>
               Please enter your admin password to restore this order to pending.
             </div>
-            
+
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
@@ -356,7 +356,7 @@ const OrderList = ({
                   setReverseLoading(false);
                   return;
                 }
-                
+
                 // Verify password
                 const { error: authError } = await supabase.auth.signInWithPassword({
                   email: user.email,
