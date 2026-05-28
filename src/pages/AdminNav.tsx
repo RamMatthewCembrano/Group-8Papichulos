@@ -6,6 +6,7 @@ import {
   History,
   Images,
   Settings,
+  QrCode,
 } from "lucide-react";
 import { C } from "./constants";
 
@@ -121,7 +122,7 @@ const NAV: { key: TabKey; Icon: React.ElementType; label: string }[] = [
   { key: "inventory", Icon: LayoutGrid, label: "Inventory" },
   { key: "history", Icon: History, label: "History" },
   { key: "carousel", Icon: Images, label: "Carousel" },
-  { key: "tables", Icon: LayoutGrid, label: "Tables" },
+  { key: "tables", Icon: QrCode, label: "Tables" },
   { key: "logs", Icon: ClipboardList, label: "Logs" },
   { key: "settings", Icon: Settings, label: "Settings" },
 ];

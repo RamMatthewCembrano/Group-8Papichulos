@@ -41,13 +41,31 @@ serve(async (req) => {
     const csvHeader = 'Order ID,Date,Table Number,Customer Name,Status,Payment Method,Item Name,Quantity,Unit Price,Item Total,Order Total,Receipt URL\n'
     
     const rows: string[] = []
+
+    interface OrderItem {
+      name: string;
+      quantity: number;
+      price: number;
+    }
+
+    interface OrderRecord {
+      id: string;
+      created_at: string;
+      table_number: string;
+      customer_name: string;
+      status: string;
+      payment_method: string;
+      total_price: number;
+      receipt_url: string | null;
+      order_items: OrderItem[];
+    }
     
-    orders.forEach((o: any) => {
+    orders.forEach((o: OrderRecord) => {
       const dateStr = new Date(o.created_at).toLocaleString()
       const payMethod = o.payment_method === 'gcash' ? 'GCash' : 'Pay at Counter'
       
       if (o.order_items && Array.isArray(o.order_items) && o.order_items.length > 0) {
-        o.order_items.forEach((item: any) => {
+        o.order_items.forEach((item: OrderItem) => {
           rows.push([
             escapeCsv(o.id),
             escapeCsv(dateStr),
@@ -119,9 +137,10 @@ serve(async (req) => {
     return new Response(JSON.stringify({ message: 'Order history emailed successfully', count: orders.length }), {
       headers: { 'Content-Type': 'application/json' },
     })
-  } catch (error: any) {
-    console.error(error)
-    return new Response(JSON.stringify({ error: error.message }), {
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error(err)
+    return new Response(JSON.stringify({ error: err.message }), {
       headers: { 'Content-Type': 'application/json' },
       status: 400,
     })

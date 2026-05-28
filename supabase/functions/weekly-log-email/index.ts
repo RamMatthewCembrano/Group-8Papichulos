@@ -89,21 +89,13 @@ serve(async (req) => {
       throw new Error(`Resend API error: ${err}`)
     }
 
-    // 4. Delete the fetched logs from the database
-    const logIds = logs.map(l => l.id)
-    const { error: deleteError } = await supabaseClient
-      .from('admin_logs')
-      .delete()
-      .in('id', logIds)
-
-    if (deleteError) throw deleteError
-
-    return new Response(JSON.stringify({ message: 'Logs emailed and cleared successfully', count: logs.length }), {
+    return new Response(JSON.stringify({ message: 'Logs emailed successfully', count: logs.length }), {
       headers: { 'Content-Type': 'application/json' },
     })
-  } catch (error: any) {
-    console.error(error)
-    return new Response(JSON.stringify({ error: error.message }), {
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error(err)
+    return new Response(JSON.stringify({ error: err.message }), {
       headers: { 'Content-Type': 'application/json' },
       status: 400,
     })

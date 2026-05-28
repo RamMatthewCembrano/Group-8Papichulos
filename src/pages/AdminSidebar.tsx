@@ -8,6 +8,7 @@ import {
   Images,
   ExternalLink,
   Settings,
+  QrCode,
 } from "lucide-react";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,7 +29,7 @@ const NAV: { key: TabKey; Icon: React.ElementType; label: string }[] = [
   { key: "inventory", Icon: LayoutGrid, label: "Inventory" },
   { key: "history", Icon: History, label: "History" },
   { key: "carousel", Icon: Images, label: "Carousel" },
-  { key: "tables", Icon: Table, label: "Tables" },
+  { key: "tables", Icon: QrCode, label: "Tables" },
   { key: "logs", Icon: ClipboardList, label: "Logs" },
   { key: "settings", Icon: Settings, label: "Settings" },
 ];

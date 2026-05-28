@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { CarouselImage } from "../types";
 
-const FACEBOOK_URL = "https://www.facebook.com/gianandrei.gelay/";
+const FACEBOOK_URL = "https://www.facebook.com/share/1NXQA6stPG/";
 const INSTAGRAM_URL = "https://www.instagram.com/papicholos_cdo/";
 
 const FacebookIcon = () => (

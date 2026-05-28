@@ -61,7 +61,9 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
              setCheckoutFee(Number(json.fee) || 0);
           }
         }
-      } catch (err) {}
+      } catch (err) {
+        console.error("Failed to load checkout fee", err);
+      }
       
       try {
         const { data, error } = await supabase.storage.from("menu-items").download("settings/gcash-details.json");
@@ -72,7 +74,9 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
              setGcashDetails(json.details);
           }
         }
-      } catch (err) {}
+      } catch (err) {
+        console.error("Failed to load GCash details", err);
+      }
     };
     fetchSettings();
   }, []);
