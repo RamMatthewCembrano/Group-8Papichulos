@@ -7,34 +7,33 @@ interface OrderTrackerProps {
   onClose: () => void;
 }
 
-const DINE_IN_STEPS: { key: OrderStatus | "received"; label: string; sub: string }[] = [
-  { key: "received", label: "Order Received", sub: "We got your order!" },
-  { key: "preparing", label: "Preparing", sub: "The kitchen is on it." },
-  { key: "ready_for_pickup", label: "Ready to Serve", sub: "Your food is on the way!" },
-  { key: "completed", label: "Completed", sub: "Enjoy your meal!" },
-];
-
-const PICKUP_STEPS: { key: OrderStatus | "received"; label: string; sub: string }[] = [
-  { key: "received", label: "Pending Order Received", sub: "Waiting for confirmation." },
-  { key: "preparing", label: "Preparing the Order", sub: "We are packing your items." },
-  { key: "ready_for_pickup", label: "Order Ready for Pickup", sub: "Please proceed to the counter." },
-  { key: "completed", label: "Order Picked Up", sub: "Thank you!" },
-];
-
-function getStepIndex(status: OrderStatus, isPickup: boolean): number {
-  if (status === "pending") return 0;
-  if (status === "preparing") return 1;
-  if (status === "ready_for_pickup") return 2;
-  if (status === "completed") return 3;
-  return -1;
-}
-
 const OrderTracker = ({ orderId, onClose }: OrderTrackerProps) => {
   const { order, loading, estimatedMinutes } = useOrderStatus(orderId);
 
   const isPickup = order?.table_number === "STORE-PICKUP" || order?.table_number?.startsWith("PUP-");
-  const STEPS = isPickup ? PICKUP_STEPS : DINE_IN_STEPS;
-  const activeStep = order ? getStepIndex(order.status, isPickup) : 0;
+  const isCash = order?.payment_method !== "gcash";
+
+  const STEPS = isPickup ? [
+    { key: "received", label: "Pending Order Received", sub: "Waiting for confirmation." },
+    ...(isCash ? [{ key: "pay", label: "Pay at the Counter", sub: "Please proceed to the counter." }] : []),
+    { key: "preparing", label: "Preparing the Order", sub: "We are packing your items." },
+    { key: "ready_for_pickup", label: "Order Ready for Pickup", sub: "Please proceed to the counter." },
+    { key: "completed", label: "Order Picked Up", sub: "Thank you!" },
+  ] : [
+    { key: "received", label: "Order Received", sub: "We got your order!" },
+    ...(isCash ? [{ key: "pay", label: "Pay at the Counter", sub: "Please settle your payment." }] : []),
+    { key: "preparing", label: "Preparing", sub: "The kitchen is on it." },
+    { key: "ready_for_pickup", label: "Ready to Serve", sub: "Your food is on the way!" },
+    { key: "completed", label: "Completed", sub: "Enjoy your meal!" },
+  ];
+
+  const activeStep = (() => {
+    if (!order) return 0;
+    if (order.status === "pending") return isCash ? 1 : 0;
+    const idx = STEPS.findIndex((s) => s.key === order.status);
+    return idx >= 0 ? idx : 0;
+  })();
+
   const isCancelled = order?.status === "cancelled";
   const isDone = order?.status === "completed";
 
@@ -149,8 +148,10 @@ const OrderTracker = ({ orderId, onClose }: OrderTrackerProps) => {
             {loading ? "Loading…"
               : isCancelled ? "Cancelled"
                 : isDone ? (isPickup ? "Picked Up!" : "Served!")
-                  : (activeStep === 1 || activeStep === 2) ? STEPS[activeStep].label
-                    : "Order Received"}
+                  : (activeStep === 1 && isCash) ? "Pay at Counter"
+                  : (activeStep === 1 && !isCash) ? STEPS[1].label
+                  : (activeStep === 2) ? STEPS[2].label
+                  : "Order Received"}
           </motion.h2>
 
           {/* Wait time badge */}

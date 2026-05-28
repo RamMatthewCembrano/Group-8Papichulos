@@ -699,19 +699,20 @@ export default function Admin() {
       {/* Custom Confirmation Modal */}
       <AnimatePresence>
         {confirmDeleteMenu && (
-          <div key="delete-modal">
+          <div key="delete-modal" style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setConfirmDeleteMenu(null)}
               style={{
-                position: "fixed",
+                position: "absolute",
                 inset: 0,
                 zIndex: 9998,
                 background: "rgba(0,0,0,0.6)",
                 backdropFilter: "blur(8px)",
                 WebkitBackdropFilter: "blur(8px)",
+                pointerEvents: "auto",
               }}
             />
             <motion.div
@@ -719,11 +720,8 @@ export default function Admin() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               style={{
-                position: "fixed",
+                pointerEvents: "auto",
                 zIndex: 9999,
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
                 width: "calc(100% - 40px)",
                 maxWidth: 340,
                 background: "rgba(25, 24, 24, 0.98)",

@@ -41,6 +41,16 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
   const [gcashDetails, setGcashDetails] = useState<string>("");
   const [qrTimestamp] = useState(Date.now());
 
+  // Reset state when the drawer opens so a second order gets a fresh form and new Pickup Code
+  useEffect(() => {
+    if (open) {
+      const urlTable = new URLSearchParams(window.location.search).get("table") ?? "";
+      setTableNumber(isPickup ? `PUP-${Math.random().toString(36).substring(2, 6).toUpperCase()}` : urlTable);
+      setReceipt(null);
+      setIsSubmitting(false);
+    }
+  }, [open, isPickup]);
+
   useEffect(() => {
     const fetchSettings = async () => {
       try {
@@ -116,9 +126,12 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
       return;
     }
 
-    if (isPickup && !phone.trim()) {
-      toast.error("Please provide a phone number for pickup.");
-      return;
+    if (isPickup) {
+      const phoneDigits = phone.replace(/[^0-9]/g, "");
+      if (phoneDigits.length !== 11) {
+        toast.error("Phone number must be exactly 11 digits (e.g. 09123456789).");
+        return;
+      }
     }
 
     if (payment === "gcash" && !receipt) {
@@ -171,13 +184,13 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
         const compressedFile = await imageCompression(receipt, options);
 
         const { error: uploadError } = await supabase.storage
-          .from("menu-items")
+          .from("Receipts")
           .upload(filePath, compressedFile);
 
         if (uploadError) throw uploadError;
 
         const { data: urlData } = supabase.storage
-          .from("menu-items")
+          .from("Receipts")
           .getPublicUrl(filePath);
 
         receiptUrl = urlData.publicUrl;
@@ -349,19 +362,21 @@ const CheckoutDrawer = ({ open, onClose, onConfirm, isPickup = false }: Checkout
                     justifyContent: "space-between",
                     backgroundColor: "#1c1b1b",
                     borderColor: "#ffffff",
+                    gap: "8px",
                   }}
                 >
-                  <span style={{ fontWeight: 600, color: "#ffffff" }}>
-                    {isPickup ? `Pickup Code: ${tableNumber}` : `Table ${tableNumber}`}
+                  <span style={{ fontWeight: 600, color: "#ffffff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {isPickup ? tableNumber : `Table ${tableNumber}`}
                   </span>
                   <span
                     style={{
                       fontSize: "10px",
                       color: "#8e9192",
                       letterSpacing: "0.08em",
+                      flexShrink: 0,
                     }}
                   >
-                    {isPickup ? "TRACKING ID" : "via QR"}
+                    {!isPickup && "via QR"}
                   </span>
                 </div>
               ) : (

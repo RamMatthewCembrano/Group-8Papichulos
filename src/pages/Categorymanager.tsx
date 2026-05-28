@@ -103,11 +103,18 @@ export const CategoryManager = ({
       <div
         style={{
           position: "fixed",
+          inset: 0,
           zIndex: 70,
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "calc(100% - 36px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          pointerEvents: "none",
+        }}
+      >
+        <div
+          style={{
+            pointerEvents: "auto",
+            width: "calc(100% - 36px)",
           maxWidth: 440,
           background: C.surface,
           borderRadius: 20,
@@ -281,7 +288,7 @@ export const CategoryManager = ({
       {createPortal(
         <AnimatePresence>
           {confirmDelete && (
-            <>
+            <div key="delete-cat-modal" style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
               <motion.div
                 key="backdrop"
                 initial={{ opacity: 0 }}
@@ -289,12 +296,13 @@ export const CategoryManager = ({
                 exit={{ opacity: 0 }}
                 onClick={() => setConfirmDelete(null)}
                 style={{
-                  position: "fixed",
+                  position: "absolute",
                   inset: 0,
                   zIndex: 9998,
                   background: "rgba(0,0,0,0.6)",
                   backdropFilter: "blur(8px)",
                   WebkitBackdropFilter: "blur(8px)",
+                  pointerEvents: "auto",
                 }}
               />
               <motion.div
@@ -303,11 +311,8 @@ export const CategoryManager = ({
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 style={{
-                  position: "fixed",
+                  pointerEvents: "auto",
                   zIndex: 9999,
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
                   width: "calc(100% - 40px)",
                   maxWidth: 340,
                   background: "rgba(25, 24, 24, 0.98)",
@@ -404,7 +409,7 @@ export const CategoryManager = ({
                   </button>
                 </div>
               </motion.div>
-            </>
+            </div>
           )}
         </AnimatePresence>,
         document.body

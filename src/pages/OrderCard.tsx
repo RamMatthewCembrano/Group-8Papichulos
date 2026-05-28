@@ -79,6 +79,8 @@ const AgeBadge = ({
         padding: level === "fresh" ? "0" : "3px 8px",
         borderRadius: 99,
         transition: "all 0.3s",
+        whiteSpace: "nowrap",
+        flexShrink: 0
       }}
     >
       {level === "urgent" && (
@@ -264,6 +266,7 @@ export const OrderCard = ({
               alignItems: "center",
               gap: 8,
               marginBottom: 6,
+              flexWrap: "wrap",
             }}
           >
             <div
@@ -287,7 +290,9 @@ export const OrderCard = ({
                 borderRadius: 4,
                 backgroundColor: isPickup ? "#F3E8FF" : "#E0F2FE", // Purple for Pickup, Blue for Dine In
                 color: isPickup ? "#6B21A8" : "#0369A1",
-                textTransform: "uppercase"
+                textTransform: "uppercase",
+                whiteSpace: "nowrap",
+                flexShrink: 0
               }}
             >
               {isPickup ? "Pickup" : "Dine In"}
@@ -451,10 +456,10 @@ export const OrderCard = ({
 
             {/* PENDING → Start Preparing + Cancel */}
             {status === "pending" && (
-              <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 <Btn
                   onClick={() => onUpdateStatus(order.id, "preparing")}
-                  sx={{ flex: 1, fontSize: 14 }}
+                  sx={{ flex: "1 1 140px", fontSize: 13, padding: "10px 12px" }}
                 >
                   <ChefHat size={14} strokeWidth={1.5} /> Start Preparing
                 </Btn>
@@ -462,8 +467,9 @@ export const OrderCard = ({
                   v="ghost"
                   onClick={() => onUpdateStatus(order.id, "cancelled")}
                   sx={{
-                    fontSize: 14,
-                    padding: "11px 16px",
+                    flex: "1 1 80px",
+                    fontSize: 13,
+                    padding: "10px 12px",
                     color: "#DC2626",
                     borderColor: "#FCA5A5",
                   }}
@@ -475,18 +481,18 @@ export const OrderCard = ({
 
             {/* PREPARING → Ready / Served */}
             {status === "preparing" && (
-              <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {isPickup ? (
                   <Btn
                     onClick={() => onUpdateStatus(order.id, "ready_for_pickup")}
-                    sx={{ flex: 1, fontSize: 14, background: "#8B5CF6", color: "white" }}
+                    sx={{ flex: "1 1 140px", fontSize: 13, padding: "10px 12px", background: "#8B5CF6", color: "white" }}
                   >
                     <Check size={14} strokeWidth={2} /> Ready for Pickup
                   </Btn>
                 ) : (
                   <Btn
                     onClick={() => onUpdateStatus(order.id, "ready_for_pickup")}
-                    sx={{ flex: 1, fontSize: 14 }}
+                    sx={{ flex: "1 1 140px", fontSize: 13, padding: "10px 12px" }}
                   >
                     <Check size={14} strokeWidth={2} /> Ready to Serve
                   </Btn>
@@ -495,8 +501,9 @@ export const OrderCard = ({
                   v="ghost"
                   onClick={() => onUpdateStatus(order.id, "cancelled")}
                   sx={{
-                    fontSize: 14,
-                    padding: "11px 16px",
+                    flex: "1 1 80px",
+                    fontSize: 13,
+                    padding: "10px 12px",
                     color: "#DC2626",
                     borderColor: "#FCA5A5",
                   }}
@@ -508,10 +515,10 @@ export const OrderCard = ({
 
             {/* READY FOR PICKUP / READY TO SERVE → Mark as Completed / Picked Up */}
             {status === "ready_for_pickup" && (
-              <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 <Btn
                   onClick={() => onUpdateStatus(order.id, "completed")}
-                  sx={{ flex: 1, fontSize: 14 }}
+                  sx={{ flex: "1 1 140px", fontSize: 13, padding: "10px 12px" }}
                 >
                   <CheckCircle2 size={14} strokeWidth={2} /> {isPickup ? "Mark as Picked Up" : "Mark as Completed"}
                 </Btn>
@@ -519,8 +526,9 @@ export const OrderCard = ({
                   v="ghost"
                   onClick={() => onUpdateStatus(order.id, "cancelled")}
                   sx={{
-                    fontSize: 14,
-                    padding: "11px 16px",
+                    flex: "1 1 80px",
+                    fontSize: 13,
+                    padding: "10px 12px",
                     color: "#DC2626",
                     borderColor: "#FCA5A5",
                   }}
