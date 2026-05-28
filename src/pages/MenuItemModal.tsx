@@ -110,14 +110,21 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
         }}
       />
       <div
-        className="a-slide-up"
         style={{
           position: "fixed",
+          inset: 0,
           zIndex: 70,
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "calc(100% - 36px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          pointerEvents: "none",
+        }}
+      >
+        <div
+          className="a-slide-up"
+          style={{
+            pointerEvents: "auto",
+            width: "calc(100% - 36px)",
           maxWidth: 440,
           background: C.surface,
           borderRadius: 0,

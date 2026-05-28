@@ -19,6 +19,8 @@ export const Pill = ({ status, isPickup }: { status: string; isPickup?: boolean 
         background: s.bg,
         padding: "4px 10px",
         borderRadius: 0,
+        whiteSpace: "nowrap",
+        flexShrink: 0
       }}
     >
       <span
