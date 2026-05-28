@@ -3,13 +3,15 @@ import { CartProvider } from "@/contexts/CartContext";
 import Header from "@/components/Header";
 import MenuGrid from "@/components/MenuGrid";
 import CartBar from "@/components/CartBar";
-import CartDrawer from "@/components/CartDrawer";
-import CheckoutDrawer from "@/components/CheckoutDrawer";
 import OrderStatusBar from "@/components/OrderStatusBar";
 import OrderTracker from "@/components/OrderTracker";
 import Footer from "@/components/Footer";
-import UserHistoryDrawer from "@/components/UserHistoryDrawer";
 import { AnimatePresence } from "framer-motion";
+import { lazy, Suspense } from "react";
+
+const CartDrawer = lazy(() => import("@/components/CartDrawer"));
+const CheckoutDrawer = lazy(() => import("@/components/CheckoutDrawer"));
+const UserHistoryDrawer = lazy(() => import("@/components/UserHistoryDrawer"));
 
 const getStorageKey = (isPickup: boolean) =>
   isPickup ? "papi_pickup_active_order_id" : "papi_active_order_id";
@@ -100,31 +102,33 @@ const IndexContent = ({ isPickup = false }: { isPickup?: boolean }) => {
         </div>
       )}
 
-      <CartDrawer
-        open={cartOpen}
-        onClose={() => setCartOpen(false)}
-        onCheckout={() => {
-          setCartOpen(false);
-          setTimeout(() => setCheckoutOpen(true), 300);
-        }}
-      />
+      <Suspense fallback={null}>
+        <CartDrawer
+          open={cartOpen}
+          onClose={() => setCartOpen(false)}
+          onCheckout={() => {
+            setCartOpen(false);
+            setTimeout(() => setCheckoutOpen(true), 300);
+          }}
+        />
 
-      <CheckoutDrawer
-        open={checkoutOpen}
-        onClose={() => setCheckoutOpen(false)}
-        onConfirm={handleOrderConfirmed}
-        isPickup={isPickup}
-      />
+        <CheckoutDrawer
+          open={checkoutOpen}
+          onClose={() => setCheckoutOpen(false)}
+          onConfirm={handleOrderConfirmed}
+          isPickup={isPickup}
+        />
 
-      <UserHistoryDrawer
-        open={historyOpen}
-        onClose={() => setHistoryOpen(false)}
-        onSelectOrder={(id) => {
-          setTrackerOrderId(id);
-          setTrackerOpen(true);
-        }}
-        isPickup={isPickup}
-      />
+        <UserHistoryDrawer
+          open={historyOpen}
+          onClose={() => setHistoryOpen(false)}
+          onSelectOrder={(id) => {
+            setTrackerOrderId(id);
+            setTrackerOpen(true);
+          }}
+          isPickup={isPickup}
+        />
+      </Suspense>
 
       {/* Order tracker sheet — slides up over the menu */}
       <AnimatePresence>
