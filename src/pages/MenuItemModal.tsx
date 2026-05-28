@@ -406,6 +406,7 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
           </Btn>
         </div>
       </div>
+      </div>
     </>
   );
 };
