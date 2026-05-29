@@ -120,11 +120,13 @@ export const MenuItemCard = ({
             lineHeight: 1.55,
             marginBottom: 14,
             flex: 1,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
           }}
         >
-          {item.description?.length > 30
-            ? `${item.description.slice(0, 30)}…`
-            : item.description}
+          {item.description}
         </div>
 
         {/* Buttons always at the bottom */}

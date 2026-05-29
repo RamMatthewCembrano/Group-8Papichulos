@@ -82,6 +82,14 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
       return;
     }
 
+    if (form.description) {
+      const wordCount = form.description.trim().split(/\s+/).filter(Boolean).length;
+      if (wordCount > 50) {
+        toast.error("Description cannot exceed 50 words");
+        return;
+      }
+    }
+
     const details = detailsText
       .split("\n")
       .map((s) => s.trim())

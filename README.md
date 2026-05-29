@@ -15,7 +15,7 @@ A full-stack, real-time restaurant ordering and management system designed for b
 
 ### Admin Dashboard
 - **Real-Time Kanban Board**: Live view of incoming orders with advanced filtering combinations (Status + Order Type). Admins can move orders through the preparation pipeline with a single click.
-- **Menu Management**: Full CRUD interface to add, edit, or delete menu items and categories. Includes direct cloud image uploads and dynamic availability toggling.
+- **Menu Management**: Full CRUD interface to add, edit, or delete menu items and categories. Features drag-and-drop category reordering, inline category renaming, direct cloud image uploads, and dynamic availability toggling.
 - **Carousel Management**: Manage the footer image carousel (upload/delete images, toggle visibility, and adjust scroll speeds).
 - **Table & QR Code Manager**: Manage active tables and automatically generate downloadable QR codes that map directly to the table's ordering link.
 - **Order History & Reversal**: View all past orders, filter by status, and securely restore accidentally cancelled orders (password protected).
@@ -40,9 +40,11 @@ A full-stack, real-time restaurant ordering and management system designed for b
 - **React Router DOM**: Client-side routing.
 
 ### Styling & UI
-- **Tailwind CSS**: Utility-first styling for rapid UI development.
+- **Custom Admin UI**: A sleek, custom-built dark-themed design system utilizing structured inline styles for a premium, high-performance management experience.
+- **Tailwind CSS**: Utility-first styling used throughout the customer-facing application.
 - **shadcn/ui & Radix UI**: Accessible, customizable, and headless UI components.
 - **Framer Motion**: Fluid, physics-based animations and transitions.
+- **@hello-pangea/dnd**: Robust drag-and-drop interactions for sorting categories.
 - **Vaul**: High-performance drawer components for mobile-friendly interactions.
 - **Lucide React**: Beautiful and consistent iconography.
 

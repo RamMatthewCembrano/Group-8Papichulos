@@ -28,6 +28,10 @@ export const CategoryManager = ({
   const addCategory = async () => {
     const name = newCat.trim();
     if (!name) return;
+    if (name.length > 15) {
+      toast.error("Category name must be 15 characters or less");
+      return;
+    }
     if (categories.map((c) => c.toLowerCase()).includes(name.toLowerCase())) {
       toast.error("Category already exists");
       return;
@@ -112,6 +116,10 @@ export const CategoryManager = ({
     const newName = editValue.trim();
     if (!newName || newName === oldName) {
       setEditingCat(null);
+      return;
+    }
+    if (newName.length > 15) {
+      toast.error("Category name must be 15 characters or less");
       return;
     }
     if (categories.map((c) => c.toLowerCase()).includes(newName.toLowerCase())) {
@@ -234,6 +242,7 @@ export const CategoryManager = ({
                 onChange={(e) => setNewCat(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addCategory()}
                 style={{ flex: 1 }}
+                maxLength={15}
               />
               <Btn
                 onClick={addCategory}
@@ -318,6 +327,7 @@ export const CategoryManager = ({
                                     fontSize: 14,
                                     outline: "none"
                                   }}
+                                  maxLength={15}
                                 />
                               ) : (
                                 <span style={{ fontSize: 14, fontWeight: 500, color: C.body, flex: 1 }}>
